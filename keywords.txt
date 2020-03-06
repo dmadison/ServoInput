@@ -1,0 +1,55 @@
+#############################################
+# Syntax Coloring Map For Servo Input Library
+#############################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+# Library
+ServoInput	KEYWORD1
+
+# Class
+ServoInputSignal	KEYWORD1
+ServoInputPin	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+# ISR
+begin	KEYWORD2
+end	KEYWORD2
+isr	KEYWORD2
+
+# Class State
+available	KEYWORD2
+pin	KEYWORD2
+
+# Get Pulse Info
+getPulse	KEYWORD2
+getPulseRaw	KEYWORD2
+
+getAngle	KEYWORD2
+getPercent	KEYWORD2
+
+map	KEYWORD2
+
+# Range Scaling
+getRange	KEYWORD2
+getRangeMin	KEYWORD2
+getRangeMax	KEYWORD2
+getRangeCenter	KEYWORD2
+
+setRange	KEYWORD2
+setRangeMin	KEYWORD2
+setRangeMax	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
