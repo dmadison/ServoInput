@@ -34,8 +34,8 @@
  *             Mega, Mega2560: 2, 3, 18, 19, 20, 21
  * Reference: https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
  */
-ServoInputPin<2> servoInput;
-Servo servoOutput;
+ServoInputPin<2> inputServo;
+Servo outputServo;
 
 int startPulse = 1000;  // microseconds (us)
 int endPulse = 2000;    // microseconds (us)
@@ -46,9 +46,9 @@ void setup() {
 	Serial.begin(115200);
 
 	ServoInput.begin();     // sets the pin states and interrupt for the servo input
-	servoOutput.attach(9);  // attaches the servo on pin 9 to the servo object
+	outputServo.attach(9);  // attaches the servo on pin 9 to the servo object
 
-	while (servoInput.available() == false) {
+	while (inputServo.available() == false) {
 		Serial.println("Waiting for servo signal...");
 		delay(500);
 	}
@@ -57,14 +57,14 @@ void setup() {
 void loop() {
 	// Going up!
 	for (int pulseOut = startPulse; pulseOut < endPulse; pulseOut++) {
-		servoOutput.writeMicroseconds(pulseOut);
+		outputServo.writeMicroseconds(pulseOut);
 		printServoInfo(pulseOut);
 		delay(waitTime);
 	}
 
 	// Going down!
 	for (int pulseOut = endPulse; pulseOut > startPulse; pulseOut--) {
-		servoOutput.writeMicroseconds(pulseOut);
+		outputServo.writeMicroseconds(pulseOut);
 		printServoInfo(pulseOut);
 		delay(waitTime);
 	}
@@ -79,7 +79,7 @@ void printServoInfo(int pulseOut) {
 	Serial.print("  ");
 
 	// Print the pulse duration, as read by the ServoInput object
-	long pulseIn = servoInput.getPulseRaw();  // get unfiltered pulse duration
+	long pulseIn = inputServo.getPulseRaw();  // get unfiltered pulse duration
 	Serial.print("R: ");
 	Serial.print(pulseIn);
 	Serial.print("  ");
