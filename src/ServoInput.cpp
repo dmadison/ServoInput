@@ -22,9 +22,58 @@
 
 #include "ServoInput.h"
 
-ServoInputSignal::ServoInputSignal() {}
+ServoInputSignal* ServoInputSignal::head = nullptr;
+ServoInputSignal* ServoInputSignal::tail = nullptr;
 
-ServoInputSignal::ServoInputSignal(uint16_t pMin, uint16_t pMax) {
+ServoInputSignal::ServoInputSignal() {
+	// If linked list is empty, set both head and tail
+	if (head == nullptr) {
+		head = this;
+		tail = this;
+	}
+	// If linked list is *not* empty, set the 'next' ptr of the tail
+	// and update the tail
+	else {
+		tail->next = this;
+		tail = this;
+	}
+}
+
+ServoInputSignal::~ServoInputSignal() {
+	// If we're at the start of the list...
+	if (this == head) {
+		// Option #1: Only element in the list
+		if (this == tail) {
+			head = nullptr;
+			tail = nullptr;  // List is now empty
+		}
+		// Option #2: First element in the list,
+		// but not *only* element
+		else {
+			head = next;  // Set head to next, and we're done
+		}
+		return;
+	}
+
+	// Option #3: Somewhere else in the list.
+	// Iterate through to find it
+	ServoInputSignal* ptr = head;
+
+	while (ptr != nullptr) {
+		if (ptr->next == this) {  // FOUND!
+			ptr->next = this->next;  // Set the previous "next" as this entry's "next" (skip this object)
+			break;  // Stop searching
+		}
+		ptr = ptr->next;  // Not found. Next entry...
+	}
+
+	// Option #4: Last entry in the list
+	if (this == tail) {
+		tail = ptr;  // Set the tail as the previous entry
+	}
+}
+
+ServoInputSignal::ServoInputSignal(uint16_t pMin, uint16_t pMax) : ServoInputSignal() {
 	setRange(pMin, pMax);
 }
 
