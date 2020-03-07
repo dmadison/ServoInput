@@ -40,40 +40,6 @@ void ServoInputManager::end() {
 	}
 }
 
-boolean ServoInputManager::available() {
-	return anyAvailable();
-}
-
-boolean ServoInputManager::allAvailable() {
-	if (ServoInputSignal::head == nullptr) return false;  // no instances
-
-	ServoInputSignal* ptr = ServoInputSignal::head;
-
-	boolean ready = true;
-	while (ptr != nullptr) {
-		if (ptr->available() == false) {
-			ready = false;
-			break;  // one is false, stop iterating
-		}
-		ptr = ptr->next;
-	}
-	return ready;
-}
-
-boolean ServoInputManager::anyAvailable() {
-	ServoInputSignal* ptr = ServoInputSignal::head;
-
-	boolean ready = false;
-	while (ptr != nullptr) {
-		if (ptr->available() == true) {
-			ready = true;
-			break;  // one is true, stop iterating
-		}
-		ptr = ptr->next;
-	}
-	return ready;
-}
-
 ServoInputManager ServoInput;  // management instance
 
 
