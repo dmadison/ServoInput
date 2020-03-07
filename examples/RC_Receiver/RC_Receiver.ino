@@ -51,8 +51,7 @@ ServoInputPin<ThrottleSignalPin> throttle(ThrottlePulseMin, ThrottlePulseMax);
 void setup() {
 	Serial.begin(115200);
 
-	steering.begin();
-	throttle.begin();
+	ServoInput.begin();
 
 	while (!steering.available() && !throttle.available()) {
 		Serial.println("Waiting for servo signals...");
