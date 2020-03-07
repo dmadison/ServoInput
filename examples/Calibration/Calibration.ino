@@ -42,7 +42,7 @@ void setup() {
 	int center = servo.getRangeCenter();  // get center value of range
 	servo.setRange(center, center);  // set min/max values to center
 
-	servo.begin();
+	ServoInput.begin();
 
 	while (servo.available() == false) {
 		Serial.println("Waiting for servo signal...");

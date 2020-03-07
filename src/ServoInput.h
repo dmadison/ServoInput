@@ -25,10 +25,25 @@
 
 #include <Arduino.h>
 
+class ServoInputManager {
+public:
+	static void begin();
+	static void end();
+};
+
+extern ServoInputManager ServoInput;
+
+
 class ServoInputSignal {
 public:
+	friend class ServoInputManager;
+
 	ServoInputSignal();
 	ServoInputSignal(uint16_t pMin, uint16_t pMax);
+	~ServoInputSignal();
+
+	virtual void begin() = 0;
+	virtual void end() = 0;
 
 	boolean available() const;
 
@@ -59,6 +74,10 @@ protected:
 
 	uint16_t pulseMin = 1000;  // 1500 us center - 500 us
 	uint16_t pulseMax = 2000;  // 1500 us center + 500 us
+
+	static ServoInputSignal* head;
+	static ServoInputSignal* tail;
+	ServoInputSignal* next;
 };
 
 
