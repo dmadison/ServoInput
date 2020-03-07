@@ -31,7 +31,7 @@
  *
  *                Reference: https://playground.arduino.cc/Main/PinChangeInterrupt/
  *
- *  Wiring:       Servo signal pin to D9
+ *  Wiring:       Servo signal to pin 9
  *  Board:        Arduino Uno, Nano, or Mini (328P based)
  */
 
@@ -70,7 +70,6 @@ void setup() {
 
 void loop() {
 	Serial.print("Servo Pin Change (");
-	Serial.print("D");
 	Serial.print(pin);
 	Serial.print(") - ");
 

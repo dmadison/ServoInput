@@ -24,6 +24,8 @@
  *                receiver and prints them over Serial: steering as an angle
  *                from -90 to 90, and throttle as an integer percentage for
  *                both forwards and reverse.
+ *
+ *  Wiring:       Servo signals to pin 2 (steering) and pin 3 (throttle)
  */
 
 #include <ServoInput.h>

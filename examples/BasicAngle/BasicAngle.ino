@@ -22,6 +22,8 @@
  *  Example:      BasicAngle
  *  Description:  Reads the PWM signal from a servo motor, converts it to
  *                an angle, and prints that angle over Serial.
+ *
+ *  Wiring:       Servo signal to pin 2
  */
 
 #include <ServoInput.h>
