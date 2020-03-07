@@ -65,14 +65,16 @@ public:
 	void setRangeMax(uint16_t max);
 
 protected:
-	static const uint16_t MinValidPulse = 300;   // us, 1500 - 1200
-	static const uint16_t MaxValidPulse = 2700;  // us, 1500 + 1200
+	static const uint16_t PulseCenter = 1500;  // microseconds (us)
+	static const uint16_t PulseValidRange = 1200;   // us, +/- ( 300 - 2700)
+	static const uint16_t PulseDefaultRange = 500;  // us, +/- (1000 - 2000)
+
 	static boolean pulseValidator(unsigned long pulse);
 
 	long remap(long pulse, long outMin, long outMax) const;
 
-	uint16_t pulseMin = 1000;  // 1500 us center - 500 us
-	uint16_t pulseMax = 2000;  // 1500 us center + 500 us
+	uint16_t pulseMin = PulseCenter - PulseDefaultRange;
+	uint16_t pulseMax = PulseCenter + PulseDefaultRange;
 
 	static ServoInputSignal* head;
 	static ServoInputSignal* tail;
