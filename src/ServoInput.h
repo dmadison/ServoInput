@@ -92,11 +92,13 @@ public:
 	}
 
 	void begin() {
-		static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This is not an interrupt-capable pin!");
 		ServoInputPin<Pin>::PinMask = digitalPinToBitMask(Pin);
 		ServoInputPin<Pin>::Port = portInputRegister(digitalPinToPort(Pin));
 		pinMode(Pin, INPUT_PULLUP);
-		attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+
+		if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {
+			attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+		}
 	}
 
 	void end() {
