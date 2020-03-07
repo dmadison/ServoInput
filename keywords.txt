@@ -45,6 +45,8 @@ setRange	KEYWORD2
 setRangeMin	KEYWORD2
 setRangeMax	KEYWORD2
 
+resetRange	KEYWORD2
+
 #######################################
 # Instances (KEYWORD2)
 #######################################
