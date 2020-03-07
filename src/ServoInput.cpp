@@ -58,6 +58,8 @@ ServoInputSignal::ServoInputSignal() {
 		tail->next = this;
 		tail = this;
 	}
+
+	resetRange();  // set initial range values
 }
 
 ServoInputSignal::~ServoInputSignal() {
@@ -153,6 +155,10 @@ void ServoInputSignal::setRangeMin(uint16_t min) {
 
 void ServoInputSignal::setRangeMax(uint16_t max) {
 	if (pulseValidator(max)) pulseMax = max;
+}
+
+void ServoInputSignal::resetRange() {
+	setRange(PulseCenter - PulseDefaultRange, PulseCenter + PulseDefaultRange);
 }
 
 boolean ServoInputSignal::pulseValidator(unsigned long pulse) {

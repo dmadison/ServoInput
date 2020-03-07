@@ -64,6 +64,8 @@ public:
 	void setRangeMin(uint16_t min);
 	void setRangeMax(uint16_t max);
 
+	void resetRange();
+
 protected:
 	static const uint16_t PulseCenter = 1500;  // microseconds (us)
 	static const uint16_t PulseValidRange = 1200;   // us, +/- ( 300 - 2700)
@@ -73,8 +75,7 @@ protected:
 
 	long remap(long pulse, long outMin, long outMax) const;
 
-	uint16_t pulseMin = PulseCenter - PulseDefaultRange;
-	uint16_t pulseMax = PulseCenter + PulseDefaultRange;
+	uint16_t pulseMin, pulseMax;  // user-set range values
 
 	static ServoInputSignal* head;
 	static ServoInputSignal* tail;
