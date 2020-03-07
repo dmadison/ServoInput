@@ -39,7 +39,6 @@ public:
 	friend class ServoInputManager;
 
 	ServoInputSignal();
-	ServoInputSignal(uint16_t pMin, uint16_t pMax);
 	~ServoInputSignal();
 
 	virtual void begin() = 0;
@@ -85,7 +84,9 @@ template<uint8_t Pin>
 class ServoInputPin : public ServoInputSignal {
 public:
 	ServoInputPin() {}
-	ServoInputPin(uint16_t pMin, uint16_t pMax) : ServoInputSignal(pMin, pMax) {}
+	ServoInputPin(uint16_t pMin, uint16_t pMax) {
+		ServoInputSignal::setRange(pMin, pMax);
+	}
 
 	void begin() {
 		static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This is not an interrupt-capable pin!");
