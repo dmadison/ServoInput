@@ -17,6 +17,10 @@ ServoInputPin	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
+# Manager
+allAvailable	KEYWORD2
+anyAvailable	KEYWORD2
+
 # ISR
 begin	KEYWORD2
 end	KEYWORD2
