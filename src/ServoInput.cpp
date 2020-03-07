@@ -22,6 +22,27 @@
 
 #include "ServoInput.h"
 
+void ServoInputManager::begin() {
+	ServoInputSignal* ptr = ServoInputSignal::head;
+
+	while (ptr != nullptr) {
+		ptr->begin();
+		ptr = ptr->next;
+	}
+}
+
+void ServoInputManager::end() {
+	ServoInputSignal* ptr = ServoInputSignal::head;
+
+	while (ptr != nullptr) {
+		ptr->end();
+		ptr = ptr->next;
+	}
+}
+
+ServoInputManager ServoInput;  // management instance
+
+
 ServoInputSignal* ServoInputSignal::head = nullptr;
 ServoInputSignal* ServoInputSignal::tail = nullptr;
 

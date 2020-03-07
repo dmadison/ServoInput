@@ -25,8 +25,19 @@
 
 #include <Arduino.h>
 
+class ServoInputManager {
+public:
+	static void begin();
+	static void end();
+};
+
+extern ServoInputManager ServoInput;
+
+
 class ServoInputSignal {
 public:
+	friend class ServoInputManager;
+
 	ServoInputSignal();
 	ServoInputSignal(uint16_t pMin, uint16_t pMax);
 	~ServoInputSignal();
