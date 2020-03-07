@@ -98,11 +98,6 @@ ServoInputSignal::ServoInputSignal(uint16_t pMin, uint16_t pMax) : ServoInputSig
 	setRange(pMin, pMax);
 }
 
-boolean ServoInputSignal::available() const {
-	const unsigned long pulse = getPulseRaw();
-	return pulseValidator(pulse);
-}
-
 uint16_t ServoInputSignal::getPulse() const {
 	const unsigned long pulse = getPulseRaw();
 	if (pulseValidator(pulse) == false) return getRangeCenter();  // not valid pulse, return center
