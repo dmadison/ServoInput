@@ -45,7 +45,7 @@ int waitTime = 10;  // milliseconds (ms)
 void setup() {
 	Serial.begin(115200);
 
-	ServoInput.begin();     // sets the pin states and interrupt for the servo input
+	ServoInput.begin();     // sets the pin states and interrupt for all ServoInputs
 	outputServo.attach(9);  // attaches the servo on pin 9 to the servo object
 
 	while (inputServo.available() == false) {
@@ -73,12 +73,12 @@ void loop() {
 void printServoInfo(int pulseOut) {
 	Serial.print("Servo Loopback | ");
 
-	// Print the pulse duration, as written to the Servo object
+	// Print the pulse duration, as written to the Servo
 	Serial.print("W: ");
 	Serial.print(pulseOut);
 	Serial.print("  ");
 
-	// Print the pulse duration, as read by the ServoInput object
+	// Print the pulse duration, as read by ServoInput
 	long pulseIn = inputServo.getPulseRaw();  // get unfiltered pulse duration
 	Serial.print("R: ");
 	Serial.print(pulseIn);
