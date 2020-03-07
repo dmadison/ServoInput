@@ -39,13 +39,12 @@ public:
 	friend class ServoInputManager;
 
 	ServoInputSignal();
-	ServoInputSignal(uint16_t pMin, uint16_t pMax);
 	~ServoInputSignal();
 
 	virtual void begin() = 0;
 	virtual void end() = 0;
 
-	boolean available() const;
+	virtual boolean available() const = 0;
 
 	uint16_t getPulse() const;
 	virtual unsigned long getPulseRaw() const = 0;
@@ -65,15 +64,18 @@ public:
 	void setRangeMin(uint16_t min);
 	void setRangeMax(uint16_t max);
 
+	void resetRange();
+
 protected:
-	static const uint16_t MinValidPulse = 300;   // us, 1500 - 1200
-	static const uint16_t MaxValidPulse = 2700;  // us, 1500 + 1200
+	static const uint16_t PulseCenter = 1500;  // microseconds (us)
+	static const uint16_t PulseValidRange = 1200;   // us, +/- ( 300 - 2700)
+	static const uint16_t PulseDefaultRange = 500;  // us, +/- (1000 - 2000)
+
 	static boolean pulseValidator(unsigned long pulse);
 
 	long remap(long pulse, long outMin, long outMax) const;
 
-	uint16_t pulseMin = 1000;  // 1500 us center - 500 us
-	uint16_t pulseMax = 2000;  // 1500 us center + 500 us
+	uint16_t pulseMin, pulseMax;  // user-set range values
 
 	static ServoInputSignal* head;
 	static ServoInputSignal* tail;
@@ -85,7 +87,9 @@ template<uint8_t Pin>
 class ServoInputPin : public ServoInputSignal {
 public:
 	ServoInputPin() {}
-	ServoInputPin(uint16_t pMin, uint16_t pMax) : ServoInputSignal(pMin, pMax) {}
+	ServoInputPin(uint16_t pMin, uint16_t pMax) {
+		ServoInputSignal::setRange(pMin, pMax);
+	}
 
 	void begin() {
 		static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This is not an interrupt-capable pin!");
@@ -108,14 +112,22 @@ public:
 
 		const boolean state = (*Port & PinMask) != 0;
 
-		if (state == HIGH) start = micros(); // rising edge
-		else pulseDuration = micros() - start;  // falling edge
+		if (state == HIGH) {  // rising edge
+			start = micros();
+		}
+		else {  // falling edge
+			pulseDuration = micros() - start;
+			changed = true;
+		}
+	}
+
+	boolean available() const {
+		return (boolean) ServoInputPin<Pin>::changed && ServoInputSignal::pulseValidator(getPulseInternal());
 	}
 
 	unsigned long getPulseRaw() const {
-		noInterrupts();
-		const unsigned long pulse = ServoInputPin<Pin>::pulseDuration;
-		interrupts();
+		const unsigned long pulse = getPulseInternal();
+		ServoInputPin<Pin>::changed = false;  // value has been read, is not longer 'new'
 		return pulse;
 	}
 
@@ -123,11 +135,23 @@ protected:
 	static uint8_t PinMask;
 	static volatile uint8_t* Port;
 
+	static volatile boolean changed;
 	static volatile unsigned long pulseDuration;
+
+	static unsigned long getPulseInternal() {
+		// disable / enable interrupts here so the multi-byte variable is not
+		// updated while it's being copied from volatile memory
+		noInterrupts();
+		const unsigned long pulse = ServoInputPin<Pin>::pulseDuration;
+		interrupts();
+		return pulse;
+	}
 };
 
 template<uint8_t Pin> uint8_t ServoInputPin<Pin>::PinMask;
 template<uint8_t Pin> volatile uint8_t* ServoInputPin<Pin>::Port;
+
+template<uint8_t Pin> volatile boolean ServoInputPin<Pin>::changed = false;
 template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::pulseDuration = 0;
 
 #endif
