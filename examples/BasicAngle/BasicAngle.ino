@@ -43,6 +43,6 @@ void setup() {
 }
 
 void loop() {
-	float angle = servo.getAngle();  // get angle of servo (0-180)
+	float angle = servo.getAngle();  // get angle of servo (0 - 180)
 	Serial.println(angle);
 }
