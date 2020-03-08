@@ -20,12 +20,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *  Example:      PinChange
- *  Description:  Uses a pin-change interrupt (PCINT) in place of an external
+ *  Description:  Uses a pin change interrupt (PCINT) in place of an external
  *                interrupt request. Allowing you to use the ServoInput library
  *                with pins that don't support external interrupts.
  *
  *                Fair warning: this gets far more complex if you use more than
- *                one pin-change interrupt with the same group, because you will
+ *                one pin change interrupt with the same group, because you will
  *                need to determine which pin triggered the interrupt before you
  *                call that pin's ISR.
  *
@@ -41,7 +41,7 @@
 #error This sketch is written for the ATmega328P (Uno, Nano, Mini, etc.) Other microcontrollers may not work. Comment out this line to continue.
 #endif
 
-const int pin = 9;  // NOT an interrupt-capable pin! But will still work if you set a pin-change interrupt
+const int pin = 9;  // NOT an interrupt-capable pin! But will still work if you set a pin change interrupt
 ServoInputPin<pin> servo;
 
 
@@ -51,7 +51,7 @@ void setInterrupt() {
 	PCICR |= bit(digitalPinToPCICRbit(pin)); // enable interrupt for the group (pin D9: PCICR |= 1 << PCIF0)
  }
 
-ISR(PCINT0_vect) {  // pin-change ISR handler for Arduino Uno pins D8 - D13
+ISR(PCINT0_vect) {  // pin change ISR handler for Arduino Uno pins D8 - D13
 	servo.isr();
 }
 
