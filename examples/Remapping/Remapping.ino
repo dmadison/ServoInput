@@ -22,6 +22,8 @@
  *  Example:      Remapping
  *  Description:  Reads a servo signal and then remaps it to angle, percent,
  *                and two arbitrary integer values.
+ *
+ *  Wiring:       Servo signal to pin 2
  */
 
 #include <ServoInput.h>

@@ -24,6 +24,8 @@
  *                records the min and max values for calibration. The min, max,
  *                and current pulse width values are then sent over serial in
  *                an easy-to-read format.
+ *
+ *  Wiring:       Servo signal to pin 2
  */
 
 #include <ServoInput.h>

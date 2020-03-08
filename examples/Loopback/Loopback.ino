@@ -22,6 +22,7 @@
  *  Example:      Loopback
  *  Description:  Use the Servo library to set a servo position, then read
  *                that servo position using the Servo Input library.
+ *
  *  Wiring:       Jumper between pins 9 (output) and 2 (input).
  */
 

@@ -22,6 +22,8 @@
  *  Example:      BasicAngle
  *  Description:  Reads the PWM signal from a servo motor, converts it to
  *                an angle, and prints that angle over Serial.
+ *
+ *  Wiring:       Servo signal to pin 2
  */
 
 #include <ServoInput.h>
@@ -41,6 +43,6 @@ void setup() {
 }
 
 void loop() {
-	float angle = servo.getAngle();  // get angle of servo (0-180)
+	float angle = servo.getAngle();  // get angle of servo (0 - 180)
 	Serial.println(angle);
 }
