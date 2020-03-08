@@ -124,7 +124,16 @@ public:
 	}
 
 	boolean available() const {
-		return (boolean) ServoInputPin<Pin>::changed && ServoInputSignal::pulseValidator(getPulseInternal());
+		boolean change = ServoInputPin<Pin>::changed;  // store temp version of volatile flag
+
+		if (change == true) {
+			boolean pulseValid = ServoInputSignal::pulseValidator(getPulseInternal());
+
+			if (pulseValid == false) {
+				ServoInputPin<Pin>::changed = change = false;  // pulse is not valid, so we can reset (ignore) the 'changed' flag
+			}
+		}
+		return change;
 	}
 
 	unsigned long getPulseRaw() const {
