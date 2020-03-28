@@ -121,7 +121,7 @@ float ServoInputSignal::getPercent() const {
 boolean ServoInputSignal::getBoolean() const {
 	const uint16_t pulse = getPulse();
 
-	return pulse >= getRangeMax() - (getRange() / 2);  // if pulse is greater than half
+	return pulse > getRangeMax() - (getRange() / 2);  // if pulse is greater than half
 }
 
 long ServoInputSignal::map(long outMin, long outMax) const {
