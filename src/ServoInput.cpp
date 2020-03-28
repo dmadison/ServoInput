@@ -118,17 +118,10 @@ float ServoInputSignal::getPercent() const {
 	return (float) out / ScaleFactor;
 }
 
-boolean ServoInputSignal::getButton(boolean bias) const {
-	const uint16_t threshold = getRange() / 2;
-
+boolean ServoInputSignal::getButton() const {
 	const uint16_t pulse = getPulse();
 
-	if (bias == LOW) {  // button active LOW, pulled up
-		return pulse <= getRangeMin() + threshold;
-	}
-	else { // button active HIGH, pulled down
-		return pulse >= getRangeMax() - threshold;
-	}
+	return pulse >= getRangeMax() - (getRange() / 2);  // if pulse is greater than half
 }
 
 long ServoInputSignal::map(long outMin, long outMax) const {
