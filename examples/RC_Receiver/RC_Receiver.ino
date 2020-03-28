@@ -24,6 +24,9 @@
  *                receiver and prints them over Serial: steering as an angle
  *                from -90 to 90, and throttle as an integer percentage for
  *                both forwards and reverse.
+ *
+ *                This example requires 4 interrupt pins to work, and will
+ *                *not* work without modification on the Arduino Uno and Nano.
  */
 
 #include <ServoInput.h>
@@ -35,19 +38,27 @@
  * Reference: https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
  */
 
-// Steering Setup
-const int SteeringSignalPin = 2;  // MUST be interrupt-capable!
+// Steering (CH1)
+const int SteeringSignalPin = 0;  // MUST be interrupt-capable!
 const int SteeringPulseMin = 1000;  // microseconds (us)
 const int SteeringPulseMax = 2000;  // Ideal values for your servo can be found with the "Calibration" example
 
 ServoInputPin<SteeringSignalPin> steering(SteeringPulseMin, SteeringPulseMax);
 
-// Throttle Setup
-const int ThrottleSignalPin = 3;  // MUST be interrupt-capable!
+// Throttle (CH2)
+const int ThrottleSignalPin = 1;  // MUST be interrupt-capable!
 const int ThrottlePulseMin = 1000;  // microseconds (us)
 const int ThrottlePulseMax = 2000;  // Ideal values for your servo can be found with the "Calibration" example
 
 ServoInputPin<ThrottleSignalPin> throttle(ThrottlePulseMin, ThrottlePulseMax);
+
+// Button, on/off (CH3)
+const int ButtonPin = 2;  // MUST be interrupt-capable!
+ServoInputPin<ButtonPin> button;
+
+// Slide Switch, 3-position (CH4)
+const int SwitchPin = 3;  // MUST be interrupt-capable!
+ServoInputPin<SwitchPin> slider;
 
 void setup() {
 	Serial.begin(115200);
@@ -63,6 +74,7 @@ void setup() {
 void loop() {
 	Serial.print("RC - ");
 
+	// Steering: print as angle from -90 to 90
 	float steeringAngle = steering.getAngle() - 90.0;  // returns 0 - 180, subtracting 90 to center at "0"
 	Serial.print("Steering: ");
 	Serial.print(steeringAngle);
@@ -70,6 +82,7 @@ void loop() {
 
 	Serial.print(" | ");  // separator
 
+	// Throttle: print as percentage from -100 to 100
 	int throttlePercent = throttle.map(-100, 100);  // remap to a percentage both forward and reverse
 	Serial.print("Throttle: ");
 	Serial.print(throttlePercent);
@@ -81,6 +94,28 @@ void loop() {
 	else {
 		Serial.print("(Reverse)");
 	}
+
+	Serial.print(" | ");  // separator
+
+	// Button: print "X" if pressed
+	boolean btn = button.getButton();  // reads the servo position as "on" if it's above the range's midpoint
+
+	Serial.print("Button: ");
+
+	if (btn == HIGH) {
+		Serial.print("X");  // pressed!
+	}
+	else {
+		Serial.print("_");  // not pressed
+	}
+
+	Serial.print(" | ");  // separator
+
+	// Slide Switch: 3 position, show positions as 1-3
+	uint8_t position = slider.map(1, 3);
+
+	Serial.print("Slider: ");
+	Serial.print(position);
 
 	Serial.println();
 }
