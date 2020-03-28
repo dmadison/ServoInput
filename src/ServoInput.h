@@ -94,6 +94,10 @@ public:
 	}
 
 	void begin() {
+		#ifndef SERVOINPUT_ENABLE_PINCHANGE
+			static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This is not an interrupt-capable pin!");
+		#endif
+
 		ServoInputPin<Pin>::PinMask = digitalPinToBitMask(Pin);
 		ServoInputPin<Pin>::Port = portInputRegister(digitalPinToPort(Pin));
 		pinMode(Pin, INPUT_PULLUP);

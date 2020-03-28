@@ -13,6 +13,9 @@ ServoInput	KEYWORD1
 ServoInputSignal	KEYWORD1
 ServoInputPin	KEYWORD1
 
+# Defines
+SERVOINPUT_ENABLE_PINCHANGE	KEYWORD1
+
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
