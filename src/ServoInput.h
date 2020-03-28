@@ -52,7 +52,7 @@ public:
 	float getAngle() const;
 	float getPercent() const;
 
-	boolean getButton() const;
+	boolean getBoolean() const;
 
 	long map(long outMin, long outMax) const;
 

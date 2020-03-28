@@ -98,7 +98,7 @@ void loop() {
 	Serial.print(" | ");  // separator
 
 	// Button: print "X" if pressed
-	boolean btn = button.getButton();  // reads the servo position as "on" if it's above the range's midpoint
+	boolean btn = button.getBoolean();  // reads the servo position as "on" if it's above the range's midpoint
 
 	Serial.print("Button: ");
 
