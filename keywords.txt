@@ -32,6 +32,7 @@ getPulseRaw	KEYWORD2
 
 getAngle	KEYWORD2
 getPercent	KEYWORD2
+getButton	KEYWORD2
 
 map	KEYWORD2
 

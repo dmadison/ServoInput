@@ -52,6 +52,8 @@ public:
 	float getAngle() const;
 	float getPercent() const;
 
+	boolean getButton(boolean bias = HIGH) const;
+
 	long map(long outMin, long outMax) const;
 
 	uint16_t getRange() const;
