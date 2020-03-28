@@ -40,12 +40,13 @@ const int SteeringSignalPin = 2;  // MUST be interrupt-capable!
 const int SteeringPulseMin = 1000;  // microseconds (us)
 const int SteeringPulseMax = 2000;  // Ideal values for your servo can be found with the "Calibration" example
 
+ServoInputPin<SteeringSignalPin> steering(SteeringPulseMin, SteeringPulseMax);
+
 // Throttle Setup
 const int ThrottleSignalPin = 3;  // MUST be interrupt-capable!
 const int ThrottlePulseMin = 1000;  // microseconds (us)
 const int ThrottlePulseMax = 2000;  // Ideal values for your servo can be found with the "Calibration" example
 
-ServoInputPin<SteeringSignalPin> steering(SteeringPulseMin, SteeringPulseMax);
 ServoInputPin<ThrottleSignalPin> throttle(ThrottlePulseMin, ThrottlePulseMax);
 
 void setup() {
