@@ -99,7 +99,7 @@ public:
 
 	void begin() {
 		#if !defined(SERVOINPUT_SUPPRESS_WARNINGS) && !defined(SERVOINPUT_USING_PCINTLIB)
-			static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This is not an interrupt-capable pin!");
+			static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This pin does not support external interrupts!");
 		#endif
 
 		ServoInputPin<Pin>::PinMask = digitalPinToBitMask(Pin);
