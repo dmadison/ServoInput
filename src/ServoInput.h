@@ -52,6 +52,8 @@ public:
 	float getAngle() const;
 	float getPercent() const;
 
+	boolean getBoolean() const;
+
 	long map(long outMin, long outMax) const;
 
 	uint16_t getRange() const;
@@ -92,6 +94,10 @@ public:
 	}
 
 	void begin() {
+		#ifndef SERVOINPUT_ENABLE_PCINT
+			static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This is not an interrupt-capable pin!");
+		#endif
+
 		ServoInputPin<Pin>::PinMask = digitalPinToBitMask(Pin);
 		ServoInputPin<Pin>::Port = portInputRegister(digitalPinToPort(Pin));
 		pinMode(Pin, INPUT_PULLUP);
@@ -124,7 +130,16 @@ public:
 	}
 
 	boolean available() const {
-		return (boolean) ServoInputPin<Pin>::changed && ServoInputSignal::pulseValidator(getPulseInternal());
+		boolean change = ServoInputPin<Pin>::changed;  // store temp version of volatile flag
+
+		if (change == true) {
+			boolean pulseValid = ServoInputSignal::pulseValidator(getPulseInternal());
+
+			if (pulseValid == false) {
+				ServoInputPin<Pin>::changed = change = false;  // pulse is not valid, so we can reset (ignore) the 'changed' flag
+			}
+		}
+		return change;
 	}
 
 	unsigned long getPulseRaw() const {

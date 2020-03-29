@@ -13,6 +13,9 @@ ServoInput	KEYWORD1
 ServoInputSignal	KEYWORD1
 ServoInputPin	KEYWORD1
 
+# Defines
+SERVOINPUT_ENABLE_PCINT	KEYWORD1
+
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
@@ -32,6 +35,7 @@ getPulseRaw	KEYWORD2
 
 getAngle	KEYWORD2
 getPercent	KEYWORD2
+getBoolean	KEYWORD2
 
 map	KEYWORD2
 

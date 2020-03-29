@@ -48,19 +48,10 @@ void setup() {
 }
 
 void loop() {
+	Serial.print("Servo Map | ");
+
 	// Use the built-in angle map (float, 0 - 180)
 	float angle = servo.getAngle();
-
-	// Use the built-in percentage map (float, 0 - 100)
-	float percent = servo.getPercent();
-
-	// Map to a single byte, unsigned
-	byte singleByte = servo.map(0, 255);
-
-	// Map to a signed integer
-	int signedInt = servo.map(-32768, 32767);
-
-	Serial.print("Servo Map | ");
 
 	Serial.print("A: ");
 	Serial.print(angle);
@@ -68,16 +59,38 @@ void loop() {
 
 	Serial.print("  ");
 
+	// Use the built-in percentage map (float, 0 - 100)
+	float percent = servo.getPercent();
+
 	Serial.print("P: ");
 	Serial.print(percent);
 	Serial.print("%");
 
 	Serial.print(" | ");
 
+	// Use the built-in boolean map (signal duration HIGH or LOW)
+	boolean state = servo.getBoolean();
+
+	Serial.print("Bool: ");
+	if (state == true) {
+		Serial.print("HIGH");
+	}
+	else if (state == false) {
+		Serial.print("LOW");
+	}
+
+	Serial.print(" | ");
+
+	// Map to a single byte, unsigned
+	byte singleByte = servo.map(0, 255);
+
 	Serial.print("Byte: ");
 	Serial.print(singleByte);
 
 	Serial.print("  ");
+
+	// Map to a 16-bit signed integer
+	int signedInt = servo.map(-32768, 32767);
 
 	Serial.print("Int: ");
 	Serial.print(signedInt);

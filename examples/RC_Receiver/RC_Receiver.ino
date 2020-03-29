@@ -42,12 +42,13 @@ const int SteeringSignalPin = 2;  // MUST be interrupt-capable!
 const int SteeringPulseMin = 1000;  // microseconds (us)
 const int SteeringPulseMax = 2000;  // Ideal values for your servo can be found with the "Calibration" example
 
+ServoInputPin<SteeringSignalPin> steering(SteeringPulseMin, SteeringPulseMax);
+
 // Throttle Setup
 const int ThrottleSignalPin = 3;  // MUST be interrupt-capable!
 const int ThrottlePulseMin = 1000;  // microseconds (us)
 const int ThrottlePulseMax = 2000;  // Ideal values for your servo can be found with the "Calibration" example
 
-ServoInputPin<SteeringSignalPin> steering(SteeringPulseMin, SteeringPulseMax);
 ServoInputPin<ThrottleSignalPin> throttle(ThrottlePulseMin, ThrottlePulseMax);
 
 void setup() {
@@ -64,7 +65,7 @@ void setup() {
 void loop() {
 	Serial.print("RC - ");
 
-	float steeringAngle = steering.getAngle() - 90.0;  // returns 0 - 180, subtracting 90 to center at "0"
+	float steeringAngle = 90.0 - steering.getAngle();  // returns 0 - 180, subtracting from 90 to center at "0" and invert for "normal" steering
 	Serial.print("Steering: ");
 	Serial.print(steeringAngle);
 	Serial.print("deg");

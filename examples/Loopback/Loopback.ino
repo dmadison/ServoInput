@@ -35,7 +35,10 @@
  *             Mega, Mega2560: 2, 3, 18, 19, 20, 21
  * Reference: https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
  */
-ServoInputPin<2> inputServo;
+const int InputPin = 2;
+const int OutputPin = 9;
+
+ServoInputPin<InputPin> inputServo;
 Servo outputServo;
 
 int startPulse = 1000;  // microseconds (us)
@@ -47,7 +50,7 @@ void setup() {
 	Serial.begin(115200);
 
 	ServoInput.begin();     // sets the pin states and interrupt for all ServoInputs
-	outputServo.attach(9);  // attaches the servo on pin 9 to the servo object
+	outputServo.attach(OutputPin);  // attaches the servo on pin 9 to the servo object
 
 	while (inputServo.available() == false) {
 		Serial.println("Waiting for servo signal...");
