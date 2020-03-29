@@ -98,7 +98,7 @@ public:
 	}
 
 	void begin() {
-		#if !defined(SERVOINPUT_ENABLE_PCINT) && !defined(SERVOINPUT_USING_PCINTLIB)
+		#if !defined(SERVOINPUT_SUPPRESS_WARNINGS) && !defined(SERVOINPUT_USING_PCINTLIB)
 			static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This is not an interrupt-capable pin!");
 		#endif
 

@@ -35,7 +35,7 @@
  *  Board:        Arduino Uno, Nano, or Mini (328P based)
  */
 
-#define SERVOINPUT_ENABLE_PCINT  // enables the use of pin change interrupts in the library
+#define SERVOINPUT_SUPPRESS_WARNINGS  // enables the use of pin change interrupts in the library
 #include <ServoInput.h>
 
 #if !defined(__AVR_ATmega168__) && !defined(__AVR_ATmega328P__)
