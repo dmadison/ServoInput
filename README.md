@@ -7,7 +7,7 @@ This is an Arduino library that allows you to read the position of servo motors 
 ```cpp
 #include <ServoInput.h>
 
-ServoInputPin<2> servo;  // must be an interrupt-capable pin!
+ServoInputPin<2> servo;
 
 void setup() {
 	ServoInput.begin();
@@ -41,7 +41,7 @@ The Servo Input library uses external interrupts to keep track of servo position
 
 Some third party boards such as the [Teensy 3.2](https://www.pjrc.com/store/teensy32.html) and the [ESP8266](https://en.wikipedia.org/wiki/ESP8266) support external interrupts on all pins. Be sure to check the documentation for your board before connecting your servos.
 
-Each servo's signal wire needs to be connected to a separate pin. If you do not have enough interrupt-capable pins on your board, you can also use [pin change interrupts](https://playground.arduino.cc/Main/PinChangeInterrupt/). These must be set manually for each ServoInputPin object, with additional code to differentiate pins if you're using multiple pin change interrupts in the same group. See the [PinChange example](examples/PinChange/PinChange.ino) for reference.
+Each servo's signal wire needs to be connected to a separate pin. If you do not have enough interrupt-capable pins on your board, you can also use [pin change interrupts](https://playground.arduino.cc/Main/PinChangeInterrupt/). ServoInput integrates with [NicoHood's](https://github.com/NicoHood) [PinChangeInterrupt](https://github.com/NicoHood/PinChangeInterrupt) library for AVRs - just import Nico's library before ServoInput and any necessary pin change interrupts will be added automatically. Be aware that due to the extra overhead pin change interrupts are not as accurate or reliable as external interrupts. Keep that in mind when choosing which pins to connect to which servo.
 
 ### Power Levels
 
