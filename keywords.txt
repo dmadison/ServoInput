@@ -14,7 +14,7 @@ ServoInputSignal	KEYWORD1
 ServoInputPin	KEYWORD1
 
 # Defines
-SERVOINPUT_ENABLE_PCINT	KEYWORD1
+SERVOINPUT_SUPPRESS_WARNINGS	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
