@@ -25,6 +25,8 @@
 
 #include <Arduino.h>
 
+#include "ServoInput_PinChange.h"
+
 class ServoInputManager {
 public:
 	static void begin();
@@ -94,7 +96,7 @@ public:
 	}
 
 	void begin() {
-		#ifndef SERVOINPUT_ENABLE_PCINT
+		#if !defined(SERVOINPUT_ENABLE_PCINT) && !defined(SERVOINPUT_USING_PCINTLIB)
 			static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This is not an interrupt-capable pin!");
 		#endif
 
@@ -102,13 +104,25 @@ public:
 		ServoInputPin<Pin>::Port = portInputRegister(digitalPinToPort(Pin));
 		pinMode(Pin, INPUT_PULLUP);
 
-		if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {
+		if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // if pin supports external interrupts
 			attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
 		}
+		#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
+		else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
+			attachPCINT(digitalPinToPCINT(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+		}
+		#endif
 	}
 
 	void end() {
-		detachInterrupt(digitalPinToInterrupt(Pin));
+		if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // detach external interrupt
+			detachInterrupt(digitalPinToInterrupt(Pin));
+		}
+		#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
+		else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
+			detachPCINT(digitalPinToPCINT(Pin));
+		}
+		#endif
 	}
 
 	static uint8_t pin() {

@@ -40,30 +40,22 @@
  *                Arduino Mega
  */
 
-#define SERVOINPUT_ENABLE_PCINT  // enables the use of pin change interrupts in the library
 #include <ServoInput.h>
-#include <PinChangeInterrupt.h>
 
 // Neither of these pins support external interrupts on the Uno
 // But they *will* work if you set up pin change interrupts!
 const int pin1 = 10;  // PB2 / PCINT2 on Uno
 const int pin2 = 11;  // PB3 / PCINT3 on Uno
 
-// ServoInput objects, defined like normal
 ServoInputPin<pin1> servo1;
 ServoInputPin<pin2> servo2;
 
 void setup() {
 	Serial.begin(115200);
 
-	ServoInput.begin();  // set pin states and store registers
+	ServoInput.begin();  // sets the pin states and interrupts (external + pin change) for all ServoInputs
 
-	// set pin change interrupts, using NicoHood library
-	// note the "reinterpret_cast" call to allow passing the static isr from the template class
-	attachPCINT(digitalPinToPCINT(servo1.pin()), reinterpret_cast<void(*)()>(servo1.isr), CHANGE);
-	attachPCINT(digitalPinToPCINT(servo2.pin()), reinterpret_cast<void(*)()>(servo2.isr), CHANGE);
-
-	while (servo1.available() == false || servo2.available() == false) {
+	while (servo1.available() == false && servo2.available() == false) {
 		Serial.println("Waiting for servo signals...");
 		delay(500);
 	}
