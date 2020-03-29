@@ -94,7 +94,7 @@ public:
 	}
 
 	void begin() {
-		#ifndef SERVOINPUT_ENABLE_PINCHANGE
+		#ifndef SERVOINPUT_ENABLE_PCINT
 			static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This is not an interrupt-capable pin!");
 		#endif
 
