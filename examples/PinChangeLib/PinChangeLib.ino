@@ -40,6 +40,7 @@
  *                Arduino Mega
  */
 
+#include <PinChangeInterrupt.h>  // must be included first!
 #include <ServoInput.h>
 
 // Neither of these pins support external interrupts on the Uno
@@ -53,7 +54,8 @@ ServoInputPin<pin2> servo2;
 void setup() {
 	Serial.begin(115200);
 
-	ServoInput.begin();  // sets the pin states and interrupts (external + pin change) for all ServoInputs
+	// set the pin states and interrupts (external + pin change using library) for all ServoInputs
+	ServoInput.begin();
 
 	while (servo1.available() == false && servo2.available() == false) {
 		Serial.println("Waiting for servo signals...");

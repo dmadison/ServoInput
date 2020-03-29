@@ -25,7 +25,9 @@
 
 #include <Arduino.h>
 
-#include "ServoInput_PinChange.h"
+#ifdef PCINT_VERSION
+#define SERVOINPUT_USING_PCINTLIB
+#endif
 
 class ServoInputManager {
 public:
