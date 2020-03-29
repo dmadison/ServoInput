@@ -66,6 +66,19 @@ void loop() {
 
 	Serial.print(" | ");
 
+	// Use the built-in boolean map (signal duration HIGH or LOW)
+	boolean state = servo.getBoolean();
+
+	Serial.print("Bool: ");
+	if (state == true) {
+		Serial.print("HIGH");
+	}
+	else if (state == false) {
+		Serial.print("LOW");
+	}
+
+	Serial.print(" | ");
+
 	// Map to a single byte, unsigned
 	byte singleByte = servo.map(0, 255);
 
