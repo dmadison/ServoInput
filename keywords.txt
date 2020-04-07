@@ -20,6 +20,10 @@ SERVOINPUT_SUPPRESS_WARNINGS	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
+# Instance Manager
+allAvailable	KEYWORD2
+anyAvailable	KEYWORD2
+
 # ISR
 begin	KEYWORD2
 end	KEYWORD2

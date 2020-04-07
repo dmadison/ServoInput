@@ -33,6 +33,10 @@ class ServoInputManager {
 public:
 	static void begin();
 	static void end();
+
+	static boolean available();
+	static boolean allAvailable();
+	static boolean anyAvailable();
 };
 
 extern ServoInputManager ServoInput;
