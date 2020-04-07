@@ -43,6 +43,9 @@ getBoolean	KEYWORD2
 
 map	KEYWORD2
 
+mapDeadzone	KEYWORD2
+mapDeadzonePulse	KEYWORD2
+
 # Range Scaling
 getRange	KEYWORD2
 getRangeMin	KEYWORD2

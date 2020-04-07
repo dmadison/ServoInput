@@ -159,6 +159,35 @@ long ServoInputSignal::map(long outMin, long outMax) const {
 	return remap(pulse, outMin, outMax);
 }
 
+long ServoInputSignal::mapDeadzone(long outMin, long outMax, float zonePercent) const {
+	if (abs(zonePercent) >= 1.0) return (outMin + outMax) / 2;  // deadzone >= full range, return deadzone value
+	uint16_t zoneUs = getRange() * abs(zonePercent);  // convert percentage to microsecond period
+	return mapDeadzonePulse(outMin, outMax, zoneUs);
+}
+
+long ServoInputSignal::mapDeadzonePulse(long outMin, long outMax, uint16_t zoneUs) const {
+	const long outCenter = (outMin + outMax) / 2;  // midpoint of output values
+
+	const uint16_t ctr = getRangeCenter();
+
+	const uint16_t zoneHalf = zoneUs / 2;  // for symmetry around the midpoint
+	const uint16_t zoneLow = ctr - zoneHalf;
+	const uint16_t zoneHigh = ctr + zoneHalf;
+
+	const uint16_t pulse = getPulse();
+
+	long output = outCenter;  // default at center, i.e. in deadzone
+
+	if (pulse < ctr - zoneHalf) {  // below deadzone
+		output = ::map(pulse, getRangeMin(), zoneLow, outMin, outCenter);
+	}
+	else if (pulse > ctr + zoneHalf) {  // above deadzone
+		output = ::map(pulse, zoneHigh, getRangeMax(), outCenter, outMax);
+	}
+
+	return output;
+}
+
 uint16_t ServoInputSignal::getRange() const {
 	return pulseMax - pulseMin;
 }

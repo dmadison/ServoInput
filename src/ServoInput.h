@@ -64,6 +64,9 @@ public:
 
 	long map(long outMin, long outMax) const;
 
+	long mapDeadzone(long outMin, long outMax, float zonePercent) const;
+	long mapDeadzonePulse(long outMin, long outMax, uint16_t zoneUs) const;
+
 	uint16_t getRange() const;
 	uint16_t getRangeMin() const;
 	uint16_t getRangeMax() const;
