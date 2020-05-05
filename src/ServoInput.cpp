@@ -226,6 +226,10 @@ void ServoInputSignal::resetRange() {
 	setRange(PulseCenter - PulseDefaultRange, PulseCenter + PulseDefaultRange);
 }
 
+ServoInputSignal* ServoInputSignal::getHead() {
+	return head;
+}
+
 boolean ServoInputSignal::pulseValidator(unsigned long pulse) {
 	return pulse >= PulseCenter - PulseValidRange
 		&& pulse <= PulseCenter + PulseValidRange;
