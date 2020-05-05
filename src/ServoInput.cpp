@@ -23,20 +23,20 @@
 #include "ServoInput.h"
 
 void ServoInputManager::begin() {
-	ServoInputSignal* ptr = ServoInputSignal::head;
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
 
 	while (ptr != nullptr) {
 		ptr->begin();
-		ptr = ptr->next;
+		ptr = ptr->getNext();
 	}
 }
 
 void ServoInputManager::end() {
-	ServoInputSignal* ptr = ServoInputSignal::head;
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
 
 	while (ptr != nullptr) {
 		ptr->end();
-		ptr = ptr->next;
+		ptr = ptr->getNext();
 	}
 }
 
@@ -45,26 +45,26 @@ boolean ServoInputManager::available() {
 }
 
 boolean ServoInputManager::allAvailable() {
-	ServoInputSignal* ptr = ServoInputSignal::head;
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
 	boolean available = false;
 
 	while (ptr != nullptr) {
 		available = ptr->available();
 		if (available == false) break;  // one not available, therefore 'all' is false
-		ptr = ptr->next;
+		ptr = ptr->getNext();
 	}
 
 	return available;
 }
 
 boolean ServoInputManager::anyAvailable() {
-	ServoInputSignal* ptr = ServoInputSignal::head;
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
 	boolean available = false;
 
 	while (ptr != nullptr) {
 		available = ptr->available();
 		if (available == true) break;  // one is available, therefore 'any' is true
-		ptr = ptr->next;
+		ptr = ptr->getNext();
 	}
 
 	return available;

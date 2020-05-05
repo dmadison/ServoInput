@@ -32,8 +32,6 @@
 
 class ServoInputSignal {
 public:
-	friend class ServoInputManager;
-
 	ServoInputSignal();
 	~ServoInputSignal();
 
