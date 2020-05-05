@@ -29,18 +29,6 @@
 #define SERVOINPUT_USING_PCINTLIB
 #endif
 
-class ServoInputManager {
-public:
-	static void begin();
-	static void end();
-
-	static boolean available();
-	static boolean allAvailable();
-	static boolean anyAvailable();
-};
-
-extern ServoInputManager ServoInput;
-
 
 class ServoInputSignal {
 public:
@@ -193,5 +181,18 @@ template<uint8_t Pin> volatile uint8_t* ServoInputPin<Pin>::Port;
 
 template<uint8_t Pin> volatile boolean ServoInputPin<Pin>::changed = false;
 template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::pulseDuration = 0;
+
+
+class ServoInputManager {
+public:
+	static void begin();
+	static void end();
+
+	static boolean available();
+	static boolean allAvailable();
+	static boolean anyAvailable();
+};
+
+extern ServoInputManager ServoInput;
 
 #endif
