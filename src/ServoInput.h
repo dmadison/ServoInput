@@ -68,6 +68,7 @@ public:
 	void resetRange();
 
 	static ServoInputSignal* getHead();
+	ServoInputSignal* getNext() const;
 
 protected:
 	static const uint16_t PulseCenter = 1500;  // microseconds (us)

@@ -230,6 +230,10 @@ ServoInputSignal* ServoInputSignal::getHead() {
 	return head;
 }
 
+ServoInputSignal* ServoInputSignal::getNext() const {
+	return next;
+}
+
 boolean ServoInputSignal::pulseValidator(unsigned long pulse) {
 	return pulse >= PulseCenter - PulseValidRange
 		&& pulse <= PulseCenter + PulseValidRange;

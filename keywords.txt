@@ -60,6 +60,7 @@ resetRange	KEYWORD2
 
 # Linked List
 getHead	KEYWORD2
+getNext	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)
