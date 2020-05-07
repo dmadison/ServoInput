@@ -95,32 +95,36 @@ public:
 	}
 
 	void begin() {
-		#if !defined(SERVOINPUT_SUPPRESS_WARNINGS) && !defined(SERVOINPUT_USING_PCINTLIB)
-			static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This pin does not support external interrupts!");
-		#endif
-
 		ServoInputPin<Pin>::PinMask = PIN_TO_BITMASK(Pin);
 		ServoInputPin<Pin>::Port = PIN_TO_BASEREG(Pin);
 		pinMode(Pin, INPUT_PULLUP);
 
-		if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // if pin supports external interrupts
-			attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
-		}
-		#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
-		else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
-			attachPCINT(digitalPinToPCINT(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
-		}
+		#if !defined(SERVOINPUT_NO_INTERRUPTS)
+			#if !defined(SERVOINPUT_SUPPRESS_WARNINGS) && !defined(SERVOINPUT_USING_PCINTLIB)
+				static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This pin does not support external interrupts!");
+			#endif
+
+			if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // if pin supports external interrupts
+				attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+			}
+			#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
+			else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
+				attachPCINT(digitalPinToPCINT(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+			}
+			#endif
 		#endif
 	}
 
 	void end() {
-		if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // detach external interrupt
-			detachInterrupt(digitalPinToInterrupt(Pin));
-		}
-		#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
-		else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
-			detachPCINT(digitalPinToPCINT(Pin));
-		}
+		#if !defined(SERVOINPUT_NO_INTERRUPTS)
+			if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // detach external interrupt
+				detachInterrupt(digitalPinToInterrupt(Pin));
+			}
+			#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
+			else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
+				detachPCINT(digitalPinToPCINT(Pin));
+			}
+			#endif
 		#endif
 	}
 
