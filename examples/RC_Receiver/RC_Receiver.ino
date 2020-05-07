@@ -56,7 +56,7 @@ void setup() {
 
 	ServoInput.begin();
 
-	while (!steering.available() && !throttle.available()) {
+	while (!ServoInput.available()) {  // wait for all signals to be ready
 		Serial.println("Waiting for servo signals...");
 		delay(500);
 	}

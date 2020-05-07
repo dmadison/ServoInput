@@ -57,7 +57,8 @@ void setup() {
 	// set the pin states and interrupts (external + pin change using library) for all ServoInputs
 	ServoInput.begin();
 
-	while (servo1.available() == false && servo2.available() == false) {
+	// wait for all servo signals to be read for the first time
+	while (!ServoInput.available()) {
 		Serial.println("Waiting for servo signals...");
 		delay(500);
 	}
@@ -68,7 +69,7 @@ void loop() {
 
 	// Print servo1 pin
 	Serial.print(" (");
-	Serial.print(servo1.pin());
+	Serial.print(servo1.getPin());
 	Serial.print(") - ");
 
 	// Print servo1 pulse, in microseconds (us)
@@ -78,7 +79,7 @@ void loop() {
 
 	// Print servo2 pin
 	Serial.print("| (");
-	Serial.print(servo2.pin());
+	Serial.print(servo2.getPin());
 	Serial.print(") - ");
 
 	// Print servo2 pulse, in microseconds (us)

@@ -24,24 +24,15 @@
 #define ServoInput_h
 
 #include <Arduino.h>
+#include "ServoInput_Platforms.h"
 
 #ifdef PCINT_VERSION
 #define SERVOINPUT_USING_PCINTLIB
 #endif
 
-class ServoInputManager {
-public:
-	static void begin();
-	static void end();
-};
-
-extern ServoInputManager ServoInput;
-
 
 class ServoInputSignal {
 public:
-	friend class ServoInputManager;
-
 	ServoInputSignal();
 	~ServoInputSignal();
 
@@ -60,6 +51,9 @@ public:
 
 	long map(long outMin, long outMax) const;
 
+	long mapDeadzone(long outMin, long outMax, float zonePercent) const;
+	long mapDeadzonePulse(long outMin, long outMax, uint16_t zoneUs) const;
+
 	uint16_t getRange() const;
 	uint16_t getRangeMin() const;
 	uint16_t getRangeMax() const;
@@ -71,6 +65,9 @@ public:
 	void setRangeMax(uint16_t max);
 
 	void resetRange();
+
+	static ServoInputSignal* getHead();
+	ServoInputSignal* getNext() const;
 
 protected:
 	static const uint16_t PulseCenter = 1500;  // microseconds (us)
@@ -98,51 +95,37 @@ public:
 	}
 
 	void begin() {
-		#if !defined(SERVOINPUT_SUPPRESS_WARNINGS) && !defined(SERVOINPUT_USING_PCINTLIB)
-			static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This pin does not support external interrupts!");
-		#endif
-
-		ServoInputPin<Pin>::PinMask = digitalPinToBitMask(Pin);
-		ServoInputPin<Pin>::Port = portInputRegister(digitalPinToPort(Pin));
+		ServoInputPin<Pin>::PinMask = PIN_TO_BITMASK(Pin);
+		ServoInputPin<Pin>::Port = PIN_TO_BASEREG(Pin);
 		pinMode(Pin, INPUT_PULLUP);
 
-		if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // if pin supports external interrupts
-			attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
-		}
-		#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
-		else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
-			attachPCINT(digitalPinToPCINT(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
-		}
+		#if !defined(SERVOINPUT_NO_INTERRUPTS)
+			#if !defined(SERVOINPUT_SUPPRESS_WARNINGS) && !defined(SERVOINPUT_USING_PCINTLIB)
+				static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This pin does not support external interrupts!");
+			#endif
+
+			if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // if pin supports external interrupts
+				attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+			}
+			#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
+			else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
+				attachPCINT(digitalPinToPCINT(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+			}
+			#endif
 		#endif
 	}
 
 	void end() {
-		if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // detach external interrupt
-			detachInterrupt(digitalPinToInterrupt(Pin));
-		}
-		#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
-		else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
-			detachPCINT(digitalPinToPCINT(Pin));
-		}
+		#if !defined(SERVOINPUT_NO_INTERRUPTS)
+			if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // detach external interrupt
+				detachInterrupt(digitalPinToInterrupt(Pin));
+			}
+			#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
+			else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
+				detachPCINT(digitalPinToPCINT(Pin));
+			}
+			#endif
 		#endif
-	}
-
-	static uint8_t pin() {
-		return Pin;
-	}
-
-	static void isr() {
-		static unsigned long start = 0;
-
-		const boolean state = (*Port & PinMask) != 0;
-
-		if (state == HIGH) {  // rising edge
-			start = micros();
-		}
-		else {  // falling edge
-			pulseDuration = micros() - start;
-			changed = true;
-		}
 	}
 
 	boolean available() const {
@@ -158,15 +141,43 @@ public:
 		return change;
 	}
 
+	boolean read() {
+		unsigned long pulse = pulseIn(Pin, HIGH, 25000);  // 20 ms per + 5 ms of grace
+
+		boolean validPulse = pulseValidator(pulse);
+		if (validPulse == true) {
+			pulseDuration = pulse;  // pulse is valid, store result
+		}
+		return validPulse;
+	}
+
 	unsigned long getPulseRaw() const {
 		const unsigned long pulse = getPulseInternal();
 		ServoInputPin<Pin>::changed = false;  // value has been read, is not longer 'new'
 		return pulse;
 	}
 
+	static uint8_t getPin() {
+		return Pin;
+	}
+
+	static void SERVOINPUT_ISR_FLAG isr() {
+		static unsigned long start = 0;
+
+		const boolean state = DIRECT_PIN_READ(Port, PinMask);
+
+		if (state == HIGH) {  // rising edge
+			start = micros();
+		}
+		else {  // falling edge
+			pulseDuration = micros() - start;
+			changed = true;
+		}
+	}
+
 protected:
-	static uint8_t PinMask;
-	static volatile uint8_t* Port;
+	static IO_REG_TYPE PinMask;
+	static volatile IO_REG_TYPE* Port;
 
 	static volatile boolean changed;
 	static volatile unsigned long pulseDuration;
@@ -181,10 +192,30 @@ protected:
 	}
 };
 
-template<uint8_t Pin> uint8_t ServoInputPin<Pin>::PinMask;
-template<uint8_t Pin> volatile uint8_t* ServoInputPin<Pin>::Port;
+template<uint8_t Pin> IO_REG_TYPE ServoInputPin<Pin>::PinMask;
+template<uint8_t Pin> volatile IO_REG_TYPE* ServoInputPin<Pin>::Port;
 
 template<uint8_t Pin> volatile boolean ServoInputPin<Pin>::changed = false;
 template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::pulseDuration = 0;
+
+
+class ServoInputManager {
+public:
+	static void begin();
+	static void end();
+
+	static boolean available();
+	static boolean allAvailable();
+	static boolean anyAvailable();
+};
+
+extern ServoInputManager ServoInput;
+
+// Clean up platform-specific register definitions
+#undef IO_REG_TYPE
+#undef PIN_TO_BASEREG
+#undef PIN_TO_BITMASK
+#undef DIRECT_PIN_READ
+#undef SERVOINPUT_ISR_FLAG
 
 #endif

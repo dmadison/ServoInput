@@ -95,5 +95,14 @@ void loop() {
 	Serial.print("Int: ");
 	Serial.print(signedInt);
 
+	Serial.print(" ");
+
+	// Map with a deadzone in the center
+	float deadzoneSize = 0.25;  // 25% around the center
+	int deadzoneMap = servo.mapDeadzone(-1000, 1000, deadzoneSize);
+
+	Serial.print("Deadzone: ");
+	Serial.print(deadzoneMap);
+
 	Serial.println();
 }

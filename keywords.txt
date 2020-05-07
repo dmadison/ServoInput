@@ -20,14 +20,19 @@ SERVOINPUT_SUPPRESS_WARNINGS	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
+# Instance Manager
+allAvailable	KEYWORD2
+anyAvailable	KEYWORD2
+
 # ISR
 begin	KEYWORD2
 end	KEYWORD2
 isr	KEYWORD2
+getPin	KEYWORD2
 
 # Class State
 available	KEYWORD2
-pin	KEYWORD2
+read	KEYWORD2
 
 # Get Pulse Info
 getPulse	KEYWORD2
@@ -38,6 +43,9 @@ getPercent	KEYWORD2
 getBoolean	KEYWORD2
 
 map	KEYWORD2
+
+mapDeadzone	KEYWORD2
+mapDeadzonePulse	KEYWORD2
 
 # Range Scaling
 getRange	KEYWORD2
@@ -50,6 +58,10 @@ setRangeMin	KEYWORD2
 setRangeMax	KEYWORD2
 
 resetRange	KEYWORD2
+
+# Linked List
+getHead	KEYWORD2
+getNext	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)

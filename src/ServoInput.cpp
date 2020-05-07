@@ -23,21 +23,51 @@
 #include "ServoInput.h"
 
 void ServoInputManager::begin() {
-	ServoInputSignal* ptr = ServoInputSignal::head;
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
 
 	while (ptr != nullptr) {
 		ptr->begin();
-		ptr = ptr->next;
+		ptr = ptr->getNext();
 	}
 }
 
 void ServoInputManager::end() {
-	ServoInputSignal* ptr = ServoInputSignal::head;
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
 
 	while (ptr != nullptr) {
 		ptr->end();
-		ptr = ptr->next;
+		ptr = ptr->getNext();
 	}
+}
+
+boolean ServoInputManager::available() {
+	return allAvailable();
+}
+
+boolean ServoInputManager::allAvailable() {
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
+	boolean available = false;
+
+	while (ptr != nullptr) {
+		available = ptr->available();
+		if (available == false) break;  // one not available, therefore 'all' is false
+		ptr = ptr->getNext();
+	}
+
+	return available;
+}
+
+boolean ServoInputManager::anyAvailable() {
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
+	boolean available = false;
+
+	while (ptr != nullptr) {
+		available = ptr->available();
+		if (available == true) break;  // one is available, therefore 'any' is true
+		ptr = ptr->getNext();
+	}
+
+	return available;
 }
 
 ServoInputManager ServoInput;  // management instance
@@ -129,6 +159,35 @@ long ServoInputSignal::map(long outMin, long outMax) const {
 	return remap(pulse, outMin, outMax);
 }
 
+long ServoInputSignal::mapDeadzone(long outMin, long outMax, float zonePercent) const {
+	if (abs(zonePercent) >= 1.0) return (outMin + outMax) / 2;  // deadzone >= full range, return deadzone value
+	uint16_t zoneUs = getRange() * abs(zonePercent);  // convert percentage to microsecond period
+	return mapDeadzonePulse(outMin, outMax, zoneUs);
+}
+
+long ServoInputSignal::mapDeadzonePulse(long outMin, long outMax, uint16_t zoneUs) const {
+	const long outCenter = (outMin + outMax) / 2;  // midpoint of output values
+
+	const uint16_t ctr = getRangeCenter();
+
+	const uint16_t zoneHalf = zoneUs / 2;  // for symmetry around the midpoint
+	const uint16_t zoneLow = ctr - zoneHalf;
+	const uint16_t zoneHigh = ctr + zoneHalf;
+
+	const uint16_t pulse = getPulse();
+
+	long output = outCenter;  // default at center, i.e. in deadzone
+
+	if (pulse < ctr - zoneHalf) {  // below deadzone
+		output = ::map(pulse, getRangeMin(), zoneLow, outMin, outCenter);
+	}
+	else if (pulse > ctr + zoneHalf) {  // above deadzone
+		output = ::map(pulse, zoneHigh, getRangeMax(), outCenter, outMax);
+	}
+
+	return output;
+}
+
 uint16_t ServoInputSignal::getRange() const {
 	return pulseMax - pulseMin;
 }
@@ -165,6 +224,14 @@ void ServoInputSignal::setRangeMax(uint16_t max) {
 
 void ServoInputSignal::resetRange() {
 	setRange(PulseCenter - PulseDefaultRange, PulseCenter + PulseDefaultRange);
+}
+
+ServoInputSignal* ServoInputSignal::getHead() {
+	return head;
+}
+
+ServoInputSignal* ServoInputSignal::getNext() const {
+	return next;
 }
 
 boolean ServoInputSignal::pulseValidator(unsigned long pulse) {
