@@ -157,7 +157,7 @@ public:
 		return Pin;
 	}
 
-	static void isr() {
+	static void SERVOINPUT_ISR_FLAG isr() {
 		static unsigned long start = 0;
 
 		const boolean state = DIRECT_PIN_READ(Port, PinMask);
@@ -212,5 +212,6 @@ extern ServoInputManager ServoInput;
 #undef PIN_TO_BASEREG
 #undef PIN_TO_BITMASK
 #undef DIRECT_PIN_READ
+#undef SERVOINPUT_ISR_FLAG
 
 #endif

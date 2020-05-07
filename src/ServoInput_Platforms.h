@@ -32,8 +32,20 @@
 #define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
 #define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
 
+#elif defined(ESP8266)
+
+#define IO_REG_TYPE                     uint32_t
+#define PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
+#define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
+#define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
+#define SERVOINPUT_ISR_FLAG             ICACHE_RAM_ATTR
+
 #else
 #error "The ServoInput library does not support this board (platform). Please create a feature request here: https://github.com/dmadison/ServoInput/"
+#endif
+
+#ifndef SERVOINPUT_ISR_FLAG
+#define SERVOINPUT_ISR_FLAG
 #endif
 
 
