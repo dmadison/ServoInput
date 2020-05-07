@@ -32,7 +32,7 @@
 #define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
 #define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
 
-#elif defined(ESP8266)
+#elif defined(ESP8266) || defined(ESP32)
 
 #define IO_REG_TYPE                     uint32_t
 #define PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
