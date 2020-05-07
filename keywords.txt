@@ -28,11 +28,11 @@ anyAvailable	KEYWORD2
 begin	KEYWORD2
 end	KEYWORD2
 isr	KEYWORD2
+getPin	KEYWORD2
 
 # Class State
 available	KEYWORD2
 read	KEYWORD2
-pin	KEYWORD2
 
 # Get Pulse Info
 getPulse	KEYWORD2

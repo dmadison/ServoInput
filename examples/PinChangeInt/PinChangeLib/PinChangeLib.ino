@@ -69,7 +69,7 @@ void loop() {
 
 	// Print servo1 pin
 	Serial.print(" (");
-	Serial.print(servo1.pin());
+	Serial.print(servo1.getPin());
 	Serial.print(") - ");
 
 	// Print servo1 pulse, in microseconds (us)
@@ -79,7 +79,7 @@ void loop() {
 
 	// Print servo2 pin
 	Serial.print("| (");
-	Serial.print(servo2.pin());
+	Serial.print(servo2.getPin());
 	Serial.print(") - ");
 
 	// Print servo2 pulse, in microseconds (us)

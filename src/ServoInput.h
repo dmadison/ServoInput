@@ -152,7 +152,7 @@ public:
 		return pulse;
 	}
 
-	static uint8_t pin() {
+	static uint8_t getPin() {
 		return Pin;
 	}
 
