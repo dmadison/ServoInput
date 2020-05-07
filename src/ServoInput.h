@@ -123,6 +123,35 @@ public:
 		#endif
 	}
 
+	boolean available() const {
+		boolean change = ServoInputPin<Pin>::changed;  // store temp version of volatile flag
+
+		if (change == true) {
+			boolean pulseValid = ServoInputSignal::pulseValidator(getPulseInternal());
+
+			if (pulseValid == false) {
+				ServoInputPin<Pin>::changed = change = false;  // pulse is not valid, so we can reset (ignore) the 'changed' flag
+			}
+		}
+		return change;
+	}
+
+	boolean read() {
+		unsigned long pulse = pulseIn(Pin, HIGH, 25000);  // 20 ms per + 5 ms of grace
+
+		boolean validPulse = pulseValidator(pulse);
+		if (validPulse == true) {
+			pulseDuration = pulse;  // pulse is valid, store result
+		}
+		return validPulse;
+	}
+
+	unsigned long getPulseRaw() const {
+		const unsigned long pulse = getPulseInternal();
+		ServoInputPin<Pin>::changed = false;  // value has been read, is not longer 'new'
+		return pulse;
+	}
+
 	static uint8_t pin() {
 		return Pin;
 	}
@@ -139,35 +168,6 @@ public:
 			pulseDuration = micros() - start;
 			changed = true;
 		}
-	}
-
-	boolean available() const {
-		boolean change = ServoInputPin<Pin>::changed;  // store temp version of volatile flag
-
-		if (change == true) {
-			boolean pulseValid = ServoInputSignal::pulseValidator(getPulseInternal());
-
-			if (pulseValid == false) {
-				ServoInputPin<Pin>::changed = change = false;  // pulse is not valid, so we can reset (ignore) the 'changed' flag
-			}
-		}
-		return change;
-	}
-
-	boolean read() {
-		unsigned long pulse = pulseIn(Pin, HIGH, 25000);  // 20 ms per + 5 ms of grace
-		
-		boolean validPulse = pulseValidator(pulse);
-		if (validPulse == true) {
-			pulseDuration = pulse;  // pulse is valid, store result
-		}
-		return validPulse;
-	}
-
-	unsigned long getPulseRaw() const {
-		const unsigned long pulse = getPulseInternal();
-		ServoInputPin<Pin>::changed = false;  // value has been read, is not longer 'new'
-		return pulse;
 	}
 
 protected:
