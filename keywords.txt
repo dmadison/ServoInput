@@ -31,6 +31,7 @@ isr	KEYWORD2
 
 # Class State
 available	KEYWORD2
+read	KEYWORD2
 pin	KEYWORD2
 
 # Get Pulse Info

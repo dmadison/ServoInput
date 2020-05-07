@@ -154,6 +154,16 @@ public:
 		return change;
 	}
 
+	boolean read() {
+		unsigned long pulse = pulseIn(Pin, HIGH, 25000);  // 20 ms per + 5 ms of grace
+		
+		boolean validPulse = pulseValidator(pulse);
+		if (validPulse == true) {
+			pulseDuration = pulse;  // pulse is valid, store result
+		}
+		return validPulse;
+	}
+
 	unsigned long getPulseRaw() const {
 		const unsigned long pulse = getPulseInternal();
 		ServoInputPin<Pin>::changed = false;  // value has been read, is not longer 'new'
