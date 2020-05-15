@@ -223,7 +223,7 @@ void ServoInputSignal::setRangeMax(uint16_t max) {
 }
 
 void ServoInputSignal::resetRange() {
-	setRange(PulseCenter - PulseDefaultRange, PulseCenter + PulseDefaultRange);
+	setRange(PulseDefaultRange);
 }
 
 ServoInputSignal* ServoInputSignal::getHead() {
@@ -235,8 +235,8 @@ ServoInputSignal* ServoInputSignal::getNext() const {
 }
 
 boolean ServoInputSignal::pulseValidator(unsigned long pulse) {
-	return pulse >= PulseCenter - PulseValidRange
-		&& pulse <= PulseCenter + PulseValidRange;
+	return pulse >= PulseCenter - (PulseValidRange / 2)
+		&& pulse <= PulseCenter + (PulseValidRange / 2);
 }
 
 long ServoInputSignal::remap(long pulse, long outMin, long outMax) const {

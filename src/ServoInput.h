@@ -71,8 +71,8 @@ public:
 
 protected:
 	static const uint16_t PulseCenter = 1500;  // microseconds (us)
-	static const uint16_t PulseValidRange = 1200;   // us, +/- ( 300 - 2700)
-	static const uint16_t PulseDefaultRange = 500;  // us, +/- (1000 - 2000)
+	static const uint16_t PulseValidRange = 2400;   // us ( 300 - 2700)
+	static const uint16_t PulseDefaultRange = 1000;  // us (1000 - 2000)
 
 	static boolean pulseValidator(unsigned long pulse);
 
