@@ -70,6 +70,18 @@ boolean ServoInputManager::anyAvailable() {
 	return available;
 }
 
+uint8_t ServoInputManager::getNumSignals() {
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
+
+	uint8_t n = 0;
+	while (ptr != nullptr) {
+		n++;
+		ptr = ptr->getNext();
+	}
+
+	return n;
+}
+
 ServoInputManager ServoInput;  // management instance
 
 

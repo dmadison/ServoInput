@@ -209,6 +209,8 @@ public:
 	static boolean available();
 	static boolean allAvailable();
 	static boolean anyAvailable();
+
+	static uint8_t getNumSignals();
 };
 
 extern ServoInputManager ServoInput;
