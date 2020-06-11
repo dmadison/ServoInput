@@ -84,7 +84,7 @@ protected:
 
 	static ServoInputSignal* head;
 	static ServoInputSignal* tail;
-	ServoInputSignal* next;
+	ServoInputSignal* next = nullptr;
 };
 
 
