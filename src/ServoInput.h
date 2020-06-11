@@ -66,6 +66,8 @@ public:
 
 	void resetRange();
 
+	virtual uint8_t getPin() const = 0;
+
 	static ServoInputSignal* getHead();
 	ServoInputSignal* getNext() const;
 
@@ -157,7 +159,7 @@ public:
 		return pulse;
 	}
 
-	static uint8_t getPin() {
+	uint8_t getPin() const {
 		return Pin;
 	}
 
