@@ -91,16 +91,17 @@ protected:
 template<uint8_t Pin>
 class ServoInputPin : public ServoInputSignal {
 public:
-	ServoInputPin() {}
-	ServoInputPin(uint16_t pMin, uint16_t pMax) {
+	ServoInputPin() {
+		ServoInputPin<Pin>::PinMask = PIN_TO_BITMASK(Pin);
+		ServoInputPin<Pin>::Port = PIN_TO_BASEREG(Pin);
+		pinMode(Pin, INPUT_PULLUP);
+	}
+
+	ServoInputPin(uint16_t pMin, uint16_t pMax) : ServoInputPin() {
 		ServoInputSignal::setRange(pMin, pMax);
 	}
 
 	void begin() {
-		ServoInputPin<Pin>::PinMask = PIN_TO_BITMASK(Pin);
-		ServoInputPin<Pin>::Port = PIN_TO_BASEREG(Pin);
-		pinMode(Pin, INPUT_PULLUP);
-
 		#if !defined(SERVOINPUT_NO_INTERRUPTS)
 			#if !defined(SERVOINPUT_SUPPRESS_WARNINGS) && !defined(SERVOINPUT_USING_PCINTLIB)
 				static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This pin does not support external interrupts!");
