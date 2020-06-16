@@ -148,6 +148,7 @@ long ServoInputSignal::mapDeadzone(long outMin, long outMax, float zonePercent) 
 
 long ServoInputSignal::mapDeadzonePulse(long outMin, long outMax, uint16_t zoneUs) const {
 	const long outCenter = (outMin + outMax) / 2;  // midpoint of output values
+	if (zoneUs > getRange()) return outCenter;  // if deadzone bigger than range, we must be in it
 
 	const uint16_t ctr = getRangeCenter();
 
