@@ -206,9 +206,6 @@ template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::pulseDuration =
 
 class ServoInputManager {
 public:
-	static void begin();
-	static void end();
-
 	static boolean available();
 	static boolean allAvailable();
 	static boolean anyAvailable();
