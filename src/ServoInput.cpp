@@ -172,10 +172,10 @@ long ServoInputSignal::mapDeadzonePulse(long outMin, long outMax, uint16_t zoneU
 
 	long output = outCenter;  // default at center, i.e. in deadzone
 
-	if (pulse < ctr - zoneHalf) {  // below deadzone
+	if (pulse < zoneLow) {  // below deadzone
 		output = ::map(pulse, getRangeMin(), zoneLow, outMin, outCenter);
 	}
-	else if (pulse > ctr + zoneHalf) {  // above deadzone
+	else if (pulse > zoneHigh) {  // above deadzone
 		output = ::map(pulse, zoneHigh, getRangeMax(), outCenter, outMax);
 	}
 
