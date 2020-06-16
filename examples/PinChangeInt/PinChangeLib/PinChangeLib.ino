@@ -54,9 +54,6 @@ ServoInputPin<pin2> servo2;
 void setup() {
 	Serial.begin(115200);
 
-	// set the pin states and interrupts (external + pin change using library) for all ServoInputs
-	ServoInput.begin();
-
 	// wait for all servo signals to be read for the first time
 	while (!ServoInput.available()) {
 		Serial.println("Waiting for servo signals...");

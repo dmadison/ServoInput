@@ -38,8 +38,6 @@ ServoInputPin<2> servo;
 
 void setup() {
 	Serial.begin(115200);
-
-	ServoInput.begin();
 }
 
 void loop() {

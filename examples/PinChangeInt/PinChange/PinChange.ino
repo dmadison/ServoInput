@@ -60,7 +60,6 @@ ISR(PCINT0_vect) {  // pin change ISR handler for Arduino Uno pins D8 - D13
 void setup() {
 	Serial.begin(115200);
 
-	ServoInput.begin();  // set pin state and store register
 	setInterrupt();  // set pin change interrupt (see above)
 
 	while (servo.available() == false) {

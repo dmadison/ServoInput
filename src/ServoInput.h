@@ -95,6 +95,8 @@ public:
 		ServoInputPin<Pin>::PinMask = PIN_TO_BITMASK(Pin);
 		ServoInputPin<Pin>::Port = PIN_TO_BASEREG(Pin);
 		pinMode(Pin, INPUT_PULLUP);
+
+		begin();  // attach interrupt
 	}
 
 	ServoInputPin(uint16_t pMin, uint16_t pMax) : ServoInputPin() {
