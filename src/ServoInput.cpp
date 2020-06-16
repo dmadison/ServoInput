@@ -68,19 +68,21 @@ ServoInputManager ServoInput;  // management instance
 
 
 ServoInputSignal* ServoInputSignal::head = nullptr;
-ServoInputSignal* ServoInputSignal::tail = nullptr;
 
 ServoInputSignal::ServoInputSignal() {
-	// If linked list is empty, set both head and tail
+	// If linked list is empty, set the head
 	if (head == nullptr) {
 		head = this;
-		tail = this;
 	}
-	// If linked list is *not* empty, set the 'next' ptr of the tail
-	// and update the tail
+	// If linked list is *not* empty, set the 'next' ptr of the
+	// last entry in the list
 	else {
-		tail->next = this;
-		tail = this;
+		ServoInputSignal* last = head;
+		while (true) {
+			if (last->next == nullptr) break;  // found last entry
+			last = last->next;
+		}
+		last->next = this;
 	}
 
 	resetRange();  // set initial range values
@@ -89,21 +91,11 @@ ServoInputSignal::ServoInputSignal() {
 ServoInputSignal::~ServoInputSignal() {
 	// If we're at the start of the list...
 	if (this == head) {
-		// Option #1: Only element in the list
-		if (this == tail) {
-			head = nullptr;
-			tail = nullptr;  // List is now empty
-		}
-		// Option #2: First element in the list,
-		// but not *only* element
-		else {
-			head = next;  // Set head to next, and we're done
-		}
+		head = next;  // Set head to next, and we're done
 		return;
 	}
 
-	// Option #3: Somewhere else in the list.
-	// Iterate through to find it
+	// Otherwise we're somewhere else in the list. Iterate through to find it.
 	ServoInputSignal* ptr = head;
 
 	while (ptr != nullptr) {
@@ -112,11 +104,6 @@ ServoInputSignal::~ServoInputSignal() {
 			break;  // Stop searching
 		}
 		ptr = ptr->next;  // Not found. Next entry...
-	}
-
-	// Option #4: Last entry in the list
-	if (this == tail) {
-		tail = ptr;  // Set the tail as the previous entry
 	}
 }
 
