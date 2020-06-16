@@ -22,24 +22,6 @@
 
 #include "ServoInput.h"
 
-void ServoInputManager::begin() {
-	ServoInputSignal* ptr = ServoInputSignal::getHead();
-
-	while (ptr != nullptr) {
-		ptr->begin();
-		ptr = ptr->getNext();
-	}
-}
-
-void ServoInputManager::end() {
-	ServoInputSignal* ptr = ServoInputSignal::getHead();
-
-	while (ptr != nullptr) {
-		ptr->end();
-		ptr = ptr->getNext();
-	}
-}
-
 boolean ServoInputManager::available() {
 	return allAvailable();
 }
@@ -70,23 +52,37 @@ boolean ServoInputManager::anyAvailable() {
 	return available;
 }
 
+uint8_t ServoInputManager::getNumSignals() {
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
+
+	uint8_t n = 0;
+	while (ptr != nullptr) {
+		n++;
+		ptr = ptr->getNext();
+	}
+
+	return n;
+}
+
 ServoInputManager ServoInput;  // management instance
 
 
 ServoInputSignal* ServoInputSignal::head = nullptr;
-ServoInputSignal* ServoInputSignal::tail = nullptr;
 
 ServoInputSignal::ServoInputSignal() {
-	// If linked list is empty, set both head and tail
+	// If linked list is empty, set the head
 	if (head == nullptr) {
 		head = this;
-		tail = this;
 	}
-	// If linked list is *not* empty, set the 'next' ptr of the tail
-	// and update the tail
+	// If linked list is *not* empty, set the 'next' ptr of the
+	// last entry in the list
 	else {
-		tail->next = this;
-		tail = this;
+		ServoInputSignal* last = head;
+		while (true) {
+			if (last->next == nullptr) break;  // found last entry
+			last = last->next;
+		}
+		last->next = this;
 	}
 
 	resetRange();  // set initial range values
@@ -95,21 +91,11 @@ ServoInputSignal::ServoInputSignal() {
 ServoInputSignal::~ServoInputSignal() {
 	// If we're at the start of the list...
 	if (this == head) {
-		// Option #1: Only element in the list
-		if (this == tail) {
-			head = nullptr;
-			tail = nullptr;  // List is now empty
-		}
-		// Option #2: First element in the list,
-		// but not *only* element
-		else {
-			head = next;  // Set head to next, and we're done
-		}
+		head = next;  // Set head to next, and we're done
 		return;
 	}
 
-	// Option #3: Somewhere else in the list.
-	// Iterate through to find it
+	// Otherwise we're somewhere else in the list. Iterate through to find it.
 	ServoInputSignal* ptr = head;
 
 	while (ptr != nullptr) {
@@ -118,11 +104,6 @@ ServoInputSignal::~ServoInputSignal() {
 			break;  // Stop searching
 		}
 		ptr = ptr->next;  // Not found. Next entry...
-	}
-
-	// Option #4: Last entry in the list
-	if (this == tail) {
-		tail = ptr;  // Set the tail as the previous entry
 	}
 }
 
@@ -167,6 +148,7 @@ long ServoInputSignal::mapDeadzone(long outMin, long outMax, float zonePercent) 
 
 long ServoInputSignal::mapDeadzonePulse(long outMin, long outMax, uint16_t zoneUs) const {
 	const long outCenter = (outMin + outMax) / 2;  // midpoint of output values
+	if (zoneUs > getRange()) return outCenter;  // if deadzone bigger than range, we must be in it
 
 	const uint16_t ctr = getRangeCenter();
 
@@ -178,10 +160,10 @@ long ServoInputSignal::mapDeadzonePulse(long outMin, long outMax, uint16_t zoneU
 
 	long output = outCenter;  // default at center, i.e. in deadzone
 
-	if (pulse < ctr - zoneHalf) {  // below deadzone
+	if (pulse < zoneLow) {  // below deadzone
 		output = ::map(pulse, getRangeMin(), zoneLow, outMin, outCenter);
 	}
-	else if (pulse > ctr + zoneHalf) {  // above deadzone
+	else if (pulse > zoneHigh) {  // above deadzone
 		output = ::map(pulse, zoneHigh, getRangeMax(), outCenter, outMax);
 	}
 
@@ -223,7 +205,7 @@ void ServoInputSignal::setRangeMax(uint16_t max) {
 }
 
 void ServoInputSignal::resetRange() {
-	setRange(PulseCenter - PulseDefaultRange, PulseCenter + PulseDefaultRange);
+	setRange(PulseDefaultRange);
 }
 
 ServoInputSignal* ServoInputSignal::getHead() {
@@ -235,8 +217,8 @@ ServoInputSignal* ServoInputSignal::getNext() const {
 }
 
 boolean ServoInputSignal::pulseValidator(unsigned long pulse) {
-	return pulse >= PulseCenter - PulseValidRange
-		&& pulse <= PulseCenter + PulseValidRange;
+	return pulse >= PulseCenter - (PulseValidRange / 2)
+		&& pulse <= PulseCenter + (PulseValidRange / 2);
 }
 
 long ServoInputSignal::remap(long pulse, long outMin, long outMax) const {

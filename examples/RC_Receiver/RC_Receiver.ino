@@ -54,8 +54,6 @@ ServoInputPin<ThrottleSignalPin> throttle(ThrottlePulseMin, ThrottlePulseMax);
 void setup() {
 	Serial.begin(115200);
 
-	ServoInput.begin();
-
 	while (!ServoInput.available()) {  // wait for all signals to be ready
 		Serial.println("Waiting for servo signals...");
 		delay(500);

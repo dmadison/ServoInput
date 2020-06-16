@@ -10,7 +10,6 @@ This is an Arduino library that allows you to read the position of servo motors 
 ServoInputPin<2> servo;
 
 void setup() {
-	ServoInput.begin();
 }
 
 void loop() {

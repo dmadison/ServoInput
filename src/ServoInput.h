@@ -36,9 +36,6 @@ public:
 	ServoInputSignal();
 	~ServoInputSignal();
 
-	virtual void begin() = 0;
-	virtual void end() = 0;
-
 	virtual boolean available() const = 0;
 
 	uint16_t getPulse() const;
@@ -66,13 +63,15 @@ public:
 
 	void resetRange();
 
+	virtual uint8_t getPin() const = 0;
+
 	static ServoInputSignal* getHead();
 	ServoInputSignal* getNext() const;
 
 protected:
 	static const uint16_t PulseCenter = 1500;  // microseconds (us)
-	static const uint16_t PulseValidRange = 1200;   // us, +/- ( 300 - 2700)
-	static const uint16_t PulseDefaultRange = 500;  // us, +/- (1000 - 2000)
+	static const uint16_t PulseValidRange = 2000;   // us ( 500 - 2500)
+	static const uint16_t PulseDefaultRange = 1000;  // us (1000 - 2000)
 
 	static boolean pulseValidator(unsigned long pulse);
 
@@ -81,31 +80,33 @@ protected:
 	uint16_t pulseMin, pulseMax;  // user-set range values
 
 	static ServoInputSignal* head;
-	static ServoInputSignal* tail;
-	ServoInputSignal* next;
+	ServoInputSignal* next = nullptr;
 };
 
 
 template<uint8_t Pin>
 class ServoInputPin : public ServoInputSignal {
 public:
-	ServoInputPin() {}
-	ServoInputPin(uint16_t pMin, uint16_t pMax) {
-		ServoInputSignal::setRange(pMin, pMax);
-	}
-
-	void begin() {
+	ServoInputPin() {
 		ServoInputPin<Pin>::PinMask = PIN_TO_BITMASK(Pin);
 		ServoInputPin<Pin>::Port = PIN_TO_BASEREG(Pin);
 		pinMode(Pin, INPUT_PULLUP);
 
+		attachInterrupt();
+	}
+
+	ServoInputPin(uint16_t pMin, uint16_t pMax) : ServoInputPin() {
+		ServoInputSignal::setRange(pMin, pMax);
+	}
+
+	void attachInterrupt() {
 		#if !defined(SERVOINPUT_NO_INTERRUPTS)
 			#if !defined(SERVOINPUT_SUPPRESS_WARNINGS) && !defined(SERVOINPUT_USING_PCINTLIB)
 				static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This pin does not support external interrupts!");
 			#endif
 
 			if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // if pin supports external interrupts
-				attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+				::attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
 			}
 			#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
 			else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
@@ -115,10 +116,10 @@ public:
 		#endif
 	}
 
-	void end() {
+	void detachInterrupt() {
 		#if !defined(SERVOINPUT_NO_INTERRUPTS)
 			if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // detach external interrupt
-				detachInterrupt(digitalPinToInterrupt(Pin));
+				::detachInterrupt(digitalPinToInterrupt(Pin));
 			}
 			#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
 			else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
@@ -157,7 +158,7 @@ public:
 		return pulse;
 	}
 
-	static uint8_t getPin() {
+	uint8_t getPin() const {
 		return Pin;
 	}
 
@@ -201,12 +202,11 @@ template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::pulseDuration =
 
 class ServoInputManager {
 public:
-	static void begin();
-	static void end();
-
 	static boolean available();
 	static boolean allAvailable();
 	static boolean anyAvailable();
+
+	static uint8_t getNumSignals();
 };
 
 extern ServoInputManager ServoInput;

@@ -49,7 +49,6 @@ int waitTime = 10;  // milliseconds (ms)
 void setup() {
 	Serial.begin(115200);
 
-	ServoInput.begin();     // sets the pin states and interrupt for all ServoInputs
 	outputServo.attach(OutputPin);  // attaches the servo on pin 9 to the servo object
 
 	while (inputServo.available() == false) {
