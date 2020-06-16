@@ -27,9 +27,11 @@ anyAvailable	KEYWORD2
 getNumSignals	KEYWORD2
 
 # ISR
-begin	KEYWORD2
-end	KEYWORD2
 isr	KEYWORD2
+
+attachInterrupt	KEYWORD2
+detachInterrupt	KEYWORD2
+
 getPin	KEYWORD2
 
 # Class State
