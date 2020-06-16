@@ -36,9 +36,6 @@ public:
 	ServoInputSignal();
 	~ServoInputSignal();
 
-	virtual void begin() = 0;
-	virtual void end() = 0;
-
 	virtual boolean available() const = 0;
 
 	uint16_t getPulse() const;
