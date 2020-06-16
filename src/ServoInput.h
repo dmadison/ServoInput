@@ -103,10 +103,6 @@ public:
 		ServoInputSignal::setRange(pMin, pMax);
 	}
 
-	~ServoInputPin() {
-		end();  // detach interrupt
-	}
-
 	void begin() {
 		#if !defined(SERVOINPUT_NO_INTERRUPTS)
 			#if !defined(SERVOINPUT_SUPPRESS_WARNINGS) && !defined(SERVOINPUT_USING_PCINTLIB)
