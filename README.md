@@ -9,8 +9,7 @@ This is an Arduino library that allows you to read the position of servo motors 
 
 ServoInputPin<2> servo;
 
-void setup() {
-}
+void setup() {}
 
 void loop() {
 	float angle = servo.getAngle();  // get angle of servo (0 - 180)
