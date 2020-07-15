@@ -38,18 +38,18 @@ public:
 
 	virtual boolean available() const = 0;
 
-	uint16_t getPulse() const;
+	uint16_t getPulse();
 	virtual unsigned long getPulseRaw() const = 0;
 
-	float getAngle() const;
-	float getPercent() const;
+	float getAngle();
+	float getPercent();
 
-	boolean getBoolean() const;
+	boolean getBoolean();
 
-	long map(long outMin, long outMax) const;
+	long map(long outMin, long outMax);
 
-	long mapDeadzone(long outMin, long outMax, float zonePercent) const;
-	long mapDeadzonePulse(long outMin, long outMax, uint16_t zoneUs) const;
+	long mapDeadzone(long outMin, long outMax, float zonePercent);
+	long mapDeadzonePulse(long outMin, long outMax, uint16_t zoneUs);
 
 	uint16_t getRange() const;
 	uint16_t getRangeMin() const;
@@ -79,8 +79,11 @@ protected:
 
 	uint16_t pulseMin, pulseMax;  // user-set range values
 
+private:
 	static ServoInputSignal* head;
 	ServoInputSignal* next = nullptr;
+
+	uint16_t lastPulse = 0;  // the last valid pulse
 };
 
 
