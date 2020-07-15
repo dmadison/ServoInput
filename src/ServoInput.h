@@ -82,6 +82,8 @@ protected:
 private:
 	static ServoInputSignal* head;
 	ServoInputSignal* next = nullptr;
+
+	uint16_t lastPulse = 0;  // the last valid pulse
 };
 
 

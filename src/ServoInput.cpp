@@ -108,11 +108,14 @@ ServoInputSignal::~ServoInputSignal() {
 }
 
 uint16_t ServoInputSignal::getPulse() {
-	const unsigned long pulse = getPulseRaw();
-	if (pulseValidator(pulse) == false) return getRangeCenter();  // not valid pulse, return center
-	if (pulse <= pulseMin) return pulseMin;
-	if (pulse >= pulseMax) return pulseMax;
-	return pulse;
+	unsigned long pulse = getPulseRaw();
+	if (pulseValidator(pulse) == false) pulse = lastPulse;  // not valid pulse, use last
+
+	if      (pulse < pulseMin) pulse = pulseMin;
+	else if (pulse > pulseMax) pulse = pulseMax;
+	lastPulse = (uint16_t) pulse;  // buffer pulse 
+
+	return lastPulse;
 }
 
 float ServoInputSignal::getAngle() {
