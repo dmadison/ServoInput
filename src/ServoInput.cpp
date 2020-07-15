@@ -107,7 +107,7 @@ ServoInputSignal::~ServoInputSignal() {
 	}
 }
 
-uint16_t ServoInputSignal::getPulse() const {
+uint16_t ServoInputSignal::getPulse() {
 	const unsigned long pulse = getPulseRaw();
 	if (pulseValidator(pulse) == false) return getRangeCenter();  // not valid pulse, return center
 	if (pulse <= pulseMin) return pulseMin;
@@ -115,38 +115,38 @@ uint16_t ServoInputSignal::getPulse() const {
 	return pulse;
 }
 
-float ServoInputSignal::getAngle() const {
+float ServoInputSignal::getAngle() {
 	static const long ScaleFactor = 100;  // for integer to float precision
 	const uint16_t pulse = getPulse();
 	long out = remap(pulse, 0 * ScaleFactor, 180 * ScaleFactor);
 	return (float) out / ScaleFactor;
 }
 
-float ServoInputSignal::getPercent() const {
+float ServoInputSignal::getPercent() {
 	static const long ScaleFactor = 100;  // for integer to float precision
 	const uint16_t pulse = getPulse();
 	long out = remap(pulse, 0 * ScaleFactor, 100 * ScaleFactor);
 	return (float) out / ScaleFactor;
 }
 
-boolean ServoInputSignal::getBoolean() const {
+boolean ServoInputSignal::getBoolean() {
 	const uint16_t pulse = getPulse();
 
 	return pulse > getRangeMax() - (getRange() / 2);  // if pulse is greater than half
 }
 
-long ServoInputSignal::map(long outMin, long outMax) const {
+long ServoInputSignal::map(long outMin, long outMax) {
 	const uint16_t pulse = getPulse();
 	return remap(pulse, outMin, outMax);
 }
 
-long ServoInputSignal::mapDeadzone(long outMin, long outMax, float zonePercent) const {
+long ServoInputSignal::mapDeadzone(long outMin, long outMax, float zonePercent) {
 	if (abs(zonePercent) >= 1.0) return (outMin + outMax) / 2;  // deadzone >= full range, return deadzone value
 	uint16_t zoneUs = getRange() * abs(zonePercent);  // convert percentage to microsecond period
 	return mapDeadzonePulse(outMin, outMax, zoneUs);
 }
 
-long ServoInputSignal::mapDeadzonePulse(long outMin, long outMax, uint16_t zoneUs) const {
+long ServoInputSignal::mapDeadzonePulse(long outMin, long outMax, uint16_t zoneUs) {
 	const long outCenter = (outMin + outMax) / 2;  // midpoint of output values
 	if (zoneUs > getRange()) return outCenter;  // if deadzone bigger than range, we must be in it
 
