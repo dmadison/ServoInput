@@ -79,6 +79,7 @@ protected:
 
 	uint16_t pulseMin, pulseMax;  // user-set range values
 
+private:
 	static ServoInputSignal* head;
 	ServoInputSignal* next = nullptr;
 };
