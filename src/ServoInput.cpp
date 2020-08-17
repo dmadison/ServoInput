@@ -126,9 +126,9 @@ float ServoInputSignal::getAngle() {
 }
 
 float ServoInputSignal::getPercent() {
-	static const long ScaleFactor = 100;  // for integer to float precision
+	static const long ScaleFactor = 10000;  // for integer to float precision
 	const uint16_t pulse = getPulse();
-	long out = remap(pulse, 0 * ScaleFactor, 100 * ScaleFactor);
+	long out = remap(pulse, 0 * ScaleFactor, 1 * ScaleFactor);
 	return (float) out / ScaleFactor;
 }
 

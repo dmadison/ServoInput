@@ -57,12 +57,11 @@ void loop() {
 
 	Serial.print("  ");
 
-	// Use the built-in percentage map (float, 0 - 100)
+	// Use the built-in percentage map (float, 0 - 1)
 	float percent = servo.getPercent();
 
 	Serial.print("P: ");
 	Serial.print(percent);
-	Serial.print("%");
 
 	Serial.print(" | ");
 
