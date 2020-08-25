@@ -1,4 +1,5 @@
 # Servo Input Library
+[![Build Status](https://travis-ci.com/dmadison/ServoInput.svg?branch=master)](https://travis-ci.com/dmadison/ServoInput)
 
 This is an Arduino library that allows you to read the position of servo motors via their signal wire without delay. You can use this library to read RC receiver channels, find the motor positions of robotics, or debug other servo motor projects.
 
