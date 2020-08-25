@@ -64,10 +64,10 @@ script:
   - buildExampleSketch RC_Receiver
   - buildExampleSketch Remapping
   - if [ "$PCINT" = "true" ]; then
-      echo "Board supports pin change interrupts";
+      echo -e "\n${CYAN}Board supports pin change interrupts! Building those examples now${NOC}\n";
       buildExampleFolder PinChangeInt;
     else
-      echo "Board does not support PCINT, not building PinChangeInt examples";
+      echo -e "\n${CYAN}Board does not support PCINT, not building PinChangeInt examples${NOC}\n";
     fi
 
 notifications:
