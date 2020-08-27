@@ -3,6 +3,8 @@
 
 This is an Arduino library that allows you to read the position of servo motors via their signal wire without delay. You can use this library to read RC receiver channels, find the motor positions of robotics, or debug other servo motor projects.
 
+For more information, [see the article](https://www.partsnotincluded.com/servo-input-library-for-arduino/) and [tutorial](https://www.partsnotincluded.com/how-to-use-an-rc-controller-with-an-arduino/) on [PartsNotIncluded.com](https://www.partsnotincluded.com/).
+
 ## Getting Started
 
 ```cpp
