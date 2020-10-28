@@ -20,6 +20,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// This file borrows the formating and naming conventions from Paul Stoffregen's
+// Encoder library. Thanks Paul!
+// https://github.com/PaulStoffregen/Encoder/blob/master/utility/direct_pin_read.h
+
 #ifndef ServoInput_Platforms_h
 #define ServoInput_Platforms_h
 
