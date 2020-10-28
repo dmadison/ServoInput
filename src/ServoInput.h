@@ -92,7 +92,7 @@ class ServoInputPin : public ServoInputSignal {
 public:
 	ServoInputPin() {
 		ServoInputPin<Pin>::PinMask = PIN_TO_BITMASK(Pin);
-		ServoInputPin<Pin>::Port = PIN_TO_BASEREG(Pin);
+		ServoInputPin<Pin>::PortRegister = PIN_TO_BASEREG(Pin);
 		pinMode(Pin, INPUT_PULLUP);
 
 		attachInterrupt();
@@ -168,7 +168,7 @@ public:
 	static void SERVOINPUT_ISR_FLAG isr() {
 		static unsigned long start = 0;
 
-		const boolean state = DIRECT_PIN_READ(Port, PinMask);
+		const boolean state = DIRECT_PIN_READ(PortRegister, PinMask);
 
 		if (state == HIGH) {  // rising edge
 			start = micros();
@@ -181,7 +181,7 @@ public:
 
 protected:
 	static IO_REG_TYPE PinMask;
-	static volatile IO_REG_TYPE* Port;
+	static volatile IO_REG_TYPE* PortRegister;
 
 	static volatile boolean changed;
 	static volatile unsigned long pulseDuration;
@@ -197,7 +197,7 @@ protected:
 };
 
 template<uint8_t Pin> IO_REG_TYPE ServoInputPin<Pin>::PinMask;
-template<uint8_t Pin> volatile IO_REG_TYPE* ServoInputPin<Pin>::Port;
+template<uint8_t Pin> volatile IO_REG_TYPE* ServoInputPin<Pin>::PortRegister;
 
 template<uint8_t Pin> volatile boolean ServoInputPin<Pin>::changed = false;
 template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::pulseDuration = 0;
