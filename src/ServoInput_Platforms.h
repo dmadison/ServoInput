@@ -20,6 +20,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// This file borrows the formating and naming conventions from Paul Stoffregen's
+// Encoder library. Thanks Paul!
+// https://github.com/PaulStoffregen/Encoder/blob/master/utility/direct_pin_read.h
+
 #ifndef ServoInput_Platforms_h
 #define ServoInput_Platforms_h
 
@@ -39,6 +43,13 @@
 #define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
 #define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
 #define SERVOINPUT_ISR_FLAG             ICACHE_RAM_ATTR
+
+#elif defined(__SAMD21G18A__)  // Arduino MKR boards, Arm Cortex-M0 SAMD21
+
+#define IO_REG_TYPE                     uint32_t
+#define PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
+#define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
+#define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
 
 #else
 #error "The ServoInput library does not support this board (platform). Please create a feature request here: https://github.com/dmadison/ServoInput/"
