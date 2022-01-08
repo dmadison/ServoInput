@@ -184,12 +184,7 @@ public:
 		}
 	}
 
-private:
-#ifdef SERVOINPUT_PIN_SPECIALIZATION
-	static SERVOINPUT_IO_REG_TYPE PinMask;  // bitmask to isolate the I/O pin
-	static volatile SERVOINPUT_IO_REG_TYPE* PortRegister;  // pointer to the I/O register for the pin
-#endif
-
+protected:
 	static volatile boolean changed;
 	static volatile unsigned long pulseDuration;
 
@@ -201,6 +196,12 @@ private:
 		interrupts();
 		return pulse;
 	}
+
+#ifdef SERVOINPUT_PIN_SPECIALIZATION
+private:
+	static SERVOINPUT_IO_REG_TYPE PinMask;  // bitmask to isolate the I/O pin
+	static volatile SERVOINPUT_IO_REG_TYPE* PortRegister;  // pointer to the I/O register for the pin
+#endif
 };
 
 #ifdef SERVOINPUT_PIN_SPECIALIZATION
