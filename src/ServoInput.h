@@ -179,9 +179,9 @@ public:
 		}
 	}
 
-protected:
-	static IO_REG_TYPE PinMask;
-	static volatile IO_REG_TYPE* PortRegister;
+private:
+	static IO_REG_TYPE PinMask;  // bitmask to isolate the I/O pin
+	static volatile IO_REG_TYPE* PortRegister;  // pointer to the I/O register for the pin
 
 	static volatile boolean changed;
 	static volatile unsigned long pulseDuration;
