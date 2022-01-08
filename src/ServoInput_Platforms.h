@@ -29,6 +29,9 @@
 
 #include <Arduino.h>
 
+// Blanket define to cover all instances
+#define SERVOINPUT_PIN_SPECIALIZATION
+
 #if defined(__AVR__) || defined(TEENSYDUINO)
 
 #define SERVOINPUT_IO_REG_TYPE                     uint8_t
@@ -53,10 +56,7 @@
 
 #else  // Universal (slow) mode
 
-#define SERVOINPUT_IO_REG_TYPE                     uint8_t
-#define SERVOINPUT_PIN_TO_BASEREG(pin)             (nullptr)
-#define SERVOINPUT_PIN_TO_BITMASK(pin)             (pin)
-#define SERVOINPUT_DIRECT_PIN_READ(base, mask)     (digitalRead(mask) ? 1 : 0)
+#undef SERVOINPUT_PIN_SPECIALIZATION
 
 #endif
 
