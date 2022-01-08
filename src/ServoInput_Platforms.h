@@ -51,8 +51,13 @@
 #define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
 #define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
 
-#else
-#error "The ServoInput library does not support this board (platform). Please create a feature request here: https://github.com/dmadison/ServoInput/"
+#else  // Universal (slow) mode
+
+#define IO_REG_TYPE                     uint8_t
+#define PIN_TO_BASEREG(pin)             (nullptr)
+#define PIN_TO_BITMASK(pin)             (pin)
+#define DIRECT_PIN_READ(base, mask)     (digitalRead(mask) ? 1 : 0)
+
 #endif
 
 #ifndef SERVOINPUT_ISR_FLAG
