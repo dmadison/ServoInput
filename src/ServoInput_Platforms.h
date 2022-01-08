@@ -45,7 +45,7 @@
 #define SERVOINPUT_PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
 #define SERVOINPUT_PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
 #define SERVOINPUT_DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
-#define SERVOINPUT_ISR_FLAG             ICACHE_RAM_ATTR
+#define SERVOINPUT_ISR_FLAG                        ICACHE_RAM_ATTR
 
 #elif defined(__SAMD21G18A__)  // Arduino MKR boards, Arm Cortex-M0 SAMD21
 
