@@ -91,8 +91,8 @@ template<uint8_t Pin>
 class ServoInputPin : public ServoInputSignal {
 public:
 	ServoInputPin() {
-		ServoInputPin<Pin>::PinMask = PIN_TO_BITMASK(Pin);
-		ServoInputPin<Pin>::PortRegister = PIN_TO_BASEREG(Pin);
+		ServoInputPin<Pin>::PinMask = SERVOINPUT_PIN_TO_BITMASK(Pin);
+		ServoInputPin<Pin>::PortRegister = SERVOINPUT_PIN_TO_BASEREG(Pin);
 		pinMode(Pin, INPUT_PULLUP);
 
 		attachInterrupt();
@@ -168,7 +168,7 @@ public:
 	static void SERVOINPUT_ISR_FLAG isr() {
 		static unsigned long start = 0;
 
-		const boolean state = DIRECT_PIN_READ(PortRegister, PinMask);
+		const boolean state = SERVOINPUT_DIRECT_PIN_READ(PortRegister, PinMask);
 
 		if (state == HIGH) {  // rising edge
 			start = micros();
@@ -180,8 +180,8 @@ public:
 	}
 
 private:
-	static IO_REG_TYPE PinMask;  // bitmask to isolate the I/O pin
-	static volatile IO_REG_TYPE* PortRegister;  // pointer to the I/O register for the pin
+	static SERVOINPUT_IO_REG_TYPE PinMask;  // bitmask to isolate the I/O pin
+	static volatile SERVOINPUT_IO_REG_TYPE* PortRegister;  // pointer to the I/O register for the pin
 
 	static volatile boolean changed;
 	static volatile unsigned long pulseDuration;
@@ -196,8 +196,8 @@ private:
 	}
 };
 
-template<uint8_t Pin> IO_REG_TYPE ServoInputPin<Pin>::PinMask;
-template<uint8_t Pin> volatile IO_REG_TYPE* ServoInputPin<Pin>::PortRegister;
+template<uint8_t Pin> SERVOINPUT_IO_REG_TYPE ServoInputPin<Pin>::PinMask;
+template<uint8_t Pin> volatile SERVOINPUT_IO_REG_TYPE* ServoInputPin<Pin>::PortRegister;
 
 template<uint8_t Pin> volatile boolean ServoInputPin<Pin>::changed = false;
 template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::pulseDuration = 0;
@@ -215,10 +215,10 @@ public:
 extern ServoInputManager ServoInput;
 
 // Clean up platform-specific register definitions
-#undef IO_REG_TYPE
-#undef PIN_TO_BASEREG
-#undef PIN_TO_BITMASK
-#undef DIRECT_PIN_READ
+#undef SERVOINPUT_IO_REG_TYPE
+#undef SERVOINPUT_PIN_TO_BASEREG
+#undef SERVOINPUT_PIN_TO_BITMASK
+#undef SERVOINPUT_DIRECT_PIN_READ
 #undef SERVOINPUT_ISR_FLAG
 
 #endif

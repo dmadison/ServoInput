@@ -31,32 +31,32 @@
 
 #if defined(__AVR__) || defined(TEENSYDUINO)
 
-#define IO_REG_TYPE                     uint8_t
-#define PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
-#define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
-#define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
+#define SERVOINPUT_IO_REG_TYPE                     uint8_t
+#define SERVOINPUT_PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
+#define SERVOINPUT_PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
+#define SERVOINPUT_DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
 
 #elif defined(ESP8266) || defined(ESP32)
 
-#define IO_REG_TYPE                     uint32_t
-#define PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
-#define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
-#define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
+#define SERVOINPUT_IO_REG_TYPE                     uint32_t
+#define SERVOINPUT_PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
+#define SERVOINPUT_PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
+#define SERVOINPUT_DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
 #define SERVOINPUT_ISR_FLAG             ICACHE_RAM_ATTR
 
 #elif defined(__SAMD21G18A__)  // Arduino MKR boards, Arm Cortex-M0 SAMD21
 
-#define IO_REG_TYPE                     uint32_t
-#define PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
-#define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
-#define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
+#define SERVOINPUT_IO_REG_TYPE                     uint32_t
+#define SERVOINPUT_PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
+#define SERVOINPUT_PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
+#define SERVOINPUT_DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
 
 #else  // Universal (slow) mode
 
-#define IO_REG_TYPE                     uint8_t
-#define PIN_TO_BASEREG(pin)             (nullptr)
-#define PIN_TO_BITMASK(pin)             (pin)
-#define DIRECT_PIN_READ(base, mask)     (digitalRead(mask) ? 1 : 0)
+#define SERVOINPUT_IO_REG_TYPE                     uint8_t
+#define SERVOINPUT_PIN_TO_BASEREG(pin)             (nullptr)
+#define SERVOINPUT_PIN_TO_BITMASK(pin)             (pin)
+#define SERVOINPUT_DIRECT_PIN_READ(base, mask)     (digitalRead(mask) ? 1 : 0)
 
 #endif
 
