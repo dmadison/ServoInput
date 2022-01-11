@@ -29,30 +29,35 @@
 
 #include <Arduino.h>
 
+// Blanket define to cover all instances
+#define SERVOINPUT_PIN_SPECIALIZATION
+
 #if defined(__AVR__) || defined(TEENSYDUINO)
 
-#define IO_REG_TYPE                     uint8_t
-#define PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
-#define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
-#define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
+#define SERVOINPUT_IO_REG_TYPE                     uint8_t
+#define SERVOINPUT_PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
+#define SERVOINPUT_PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
+#define SERVOINPUT_DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
 
 #elif defined(ESP8266) || defined(ESP32)
 
-#define IO_REG_TYPE                     uint32_t
-#define PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
-#define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
-#define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
-#define SERVOINPUT_ISR_FLAG             ICACHE_RAM_ATTR
+#define SERVOINPUT_IO_REG_TYPE                     uint32_t
+#define SERVOINPUT_PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
+#define SERVOINPUT_PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
+#define SERVOINPUT_DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
+#define SERVOINPUT_ISR_FLAG                        ICACHE_RAM_ATTR
 
 #elif defined(__SAMD21G18A__)  // Arduino MKR boards, Arm Cortex-M0 SAMD21
 
-#define IO_REG_TYPE                     uint32_t
-#define PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
-#define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
-#define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
+#define SERVOINPUT_IO_REG_TYPE                     uint32_t
+#define SERVOINPUT_PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
+#define SERVOINPUT_PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
+#define SERVOINPUT_DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
 
-#else
-#error "The ServoInput library does not support this board (platform). Please create a feature request here: https://github.com/dmadison/ServoInput/"
+#else  // Universal (slow) mode
+
+#undef SERVOINPUT_PIN_SPECIALIZATION
+
 #endif
 
 #ifndef SERVOINPUT_ISR_FLAG
