@@ -134,24 +134,19 @@ public:
 	}
 
 	boolean available() const {
-		boolean change = ServoInputPin<Pin>::changed;  // store temp version of volatile flag
-
-		if (change == true) {
-			boolean pulseValid = ServoInputSignal::pulseValidator(getPulseInternal());
-
-			if (pulseValid == false) {
-				ServoInputPin<Pin>::changed = change = false;  // pulse is not valid, so we can reset (ignore) the 'changed' flag
-			}
-		}
-		return change;
+		// validation has been moved to the ISR in order to store the
+		// timestamp of the last valid pulse
+		return ServoInputPin<Pin>::changed;
 	}
 
 	boolean read() {
+		const unsigned long now = micros();
 		unsigned long pulse = pulseIn(Pin, HIGH, 25000);  // 20 ms per + 5 ms of grace
 
 		boolean validPulse = pulseValidator(pulse);
 		if (validPulse == true) {
 			pulseDuration = pulse;  // pulse is valid, store result
+			lastValid = now;
 		}
 		return validPulse;
 	}
@@ -179,14 +174,19 @@ public:
 			start = micros();
 		}
 		else {  // falling edge
-			pulseDuration = micros() - start;
-			changed = true;
+			const unsigned long now = micros();
+			pulseDuration = now - start;
+			if (pulseValidator(pulseDuration)) {
+				changed = true;
+				lastValid = now;
+			}
 		}
 	}
 
 protected:
-	static volatile boolean changed;
-	static volatile unsigned long pulseDuration;
+	static volatile boolean changed;  // flag to indicate whether a new pulse is received
+	static volatile unsigned long pulseDuration;  // the raw pulse duration from the ISR (us)
+	static volatile unsigned long lastValid;      // timestamp of the last time there was a valid pulse
 
 	static unsigned long getPulseInternal() {
 		// disable / enable interrupts here so the multi-byte variable is not
@@ -211,6 +211,7 @@ template<uint8_t Pin> volatile SERVOINPUT_IO_REG_TYPE* ServoInputPin<Pin>::PortR
 
 template<uint8_t Pin> volatile boolean ServoInputPin<Pin>::changed = false;
 template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::pulseDuration = 0;
+template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::lastValid = 0;
 
 
 class ServoInputManager {
