@@ -172,6 +172,25 @@ long ServoInputSignal::mapDeadzonePulse(long outMin, long outMax, uint16_t zoneU
 	return output;
 }
 
+bool ServoInputSignal::timeout(unsigned long ms) const {
+	// timestamp of the last time a valid pulse was received, in us
+	const unsigned long last = getValidTimestamp();
+
+	// edge case: if no signal has been received, then the timestamp,
+	// available flag, and the raw pulse width are all zero. in this
+	// case we can consider timeout to be 'true'
+	//
+	// note: this should short-circuit, so the overhead of the other
+	// two function calls is none except when no pulse has
+	// been recorded
+	if (last == 0 && !available() && getPulseRaw() == 0)
+		return true;
+
+	// otherwise, timeout occurs when the timestamp of the last valid
+	// pulse exceeds the specified timeout period (in ms)
+	return micros() - last >= (ms * 1000);
+}
+
 uint16_t ServoInputSignal::getRange() const {
 	return pulseMax - pulseMin;
 }

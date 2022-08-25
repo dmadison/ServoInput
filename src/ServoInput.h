@@ -51,6 +51,9 @@ public:
 	long mapDeadzone(long outMin, long outMax, float zonePercent);
 	long mapDeadzonePulse(long outMin, long outMax, uint16_t zoneUs);
 
+	bool timeout(unsigned long ms = 1000) const;
+	virtual unsigned long getValidTimestamp() const = 0;
+
 	uint16_t getRange() const;
 	uint16_t getRangeMin() const;
 	uint16_t getRangeMax() const;
@@ -155,6 +158,15 @@ public:
 		const unsigned long pulse = getPulseInternal();
 		ServoInputPin<Pin>::changed = false;  // value has been read, is not longer 'new'
 		return pulse;
+	}
+
+	unsigned long getValidTimestamp() const {
+		// disable / enable interrupts here so the multi-byte variable is not
+		// updated while it's being copied from volatile memory
+		noInterrupts();
+		const unsigned long last = ServoInputPin<Pin>::lastValid;
+		interrupts();
+		return last;
 	}
 
 	uint8_t getPin() const {

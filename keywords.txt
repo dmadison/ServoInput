@@ -51,6 +51,10 @@ map	KEYWORD2
 mapDeadzone	KEYWORD2
 mapDeadzonePulse	KEYWORD2
 
+# Timeouts
+timeout	KEYWORD2
+getValidTimestamp	KEYWORD2
+
 # Range Scaling
 getRange	KEYWORD2
 getRangeMin	KEYWORD2
