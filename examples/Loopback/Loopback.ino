@@ -44,7 +44,11 @@ Servo outputServo;
 int startPulse = 1000;  // microseconds (us)
 int endPulse = 2000;    // microseconds (us)
 
-int waitTime = 10;  // milliseconds (ms)
+int waitTime = 10;      // milliseconds (ms)
+
+const unsigned long PrintTime = 1000;  // how often to print when signal is lost (ms)
+unsigned long lastPrint = (0 - PrintTime);  // timestamp of the last time we printed
+
 
 void setup() {
 	Serial.begin(115200);
@@ -60,20 +64,34 @@ void setup() {
 void loop() {
 	// Going up!
 	for (int pulseOut = startPulse; pulseOut < endPulse; pulseOut++) {
-		outputServo.writeMicroseconds(pulseOut);
-		printServoInfo(pulseOut);
+		runTest(pulseOut);
 		delay(waitTime);
 	}
 
 	// Going down!
 	for (int pulseOut = endPulse; pulseOut > startPulse; pulseOut--) {
-		outputServo.writeMicroseconds(pulseOut);
-		printServoInfo(pulseOut);
+		runTest(pulseOut);
 		delay(waitTime);
 	}
 }
 
-void printServoInfo(int pulseOut) {
+void runTest(int pulseOut) {
+	// Write the current pulse
+	outputServo.writeMicroseconds(pulseOut);
+
+	// Check if we still have a good signal
+	// (and wait, if we don't)
+	while (inputServo.timeout()) {
+		// using the millis() counter to avoid delay(), so that we
+		// can jump back in as soon as the signal reappears
+		const unsigned long now = millis();
+		if (now - lastPrint >= PrintTime) {
+			Serial.println("Signal lost! Waiting for it to reappear...");
+			lastPrint = now;
+		}
+	}
+
+	// Start our print output
 	Serial.print("Servo Loopback | ");
 
 	// Print the pulse duration, as written to the Servo
@@ -82,7 +100,7 @@ void printServoInfo(int pulseOut) {
 	Serial.print("  ");
 
 	// Print the pulse duration, as read by ServoInput
-	long pulseIn = inputServo.getPulseRaw();  // get unfiltered pulse duration
+	const long pulseIn = inputServo.getPulseRaw();  // get unfiltered pulse duration
 	Serial.print("R: ");
 	Serial.print(pulseIn);
 	Serial.print("  ");
