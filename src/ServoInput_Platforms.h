@@ -32,7 +32,7 @@
 // Blanket define to cover all instances
 #define SERVOINPUT_PIN_SPECIALIZATION
 
-#if defined(__AVR__) || defined(TEENSYDUINO)
+#if defined(__AVR__) // || defined(TEENSYDUINO)
 
 #define SERVOINPUT_IO_REG_TYPE                     uint8_t
 #define SERVOINPUT_PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
@@ -50,6 +50,12 @@
 #elif defined(__SAMD21G18A__)  // Arduino MKR boards, Arm Cortex-M0 SAMD21
 
 #define SERVOINPUT_IO_REG_TYPE                     uint32_t
+#define SERVOINPUT_PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
+#define SERVOINPUT_PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
+#define SERVOINPUT_DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
+
+#elif defined(__IMXRT1062__)  // Teensy 4.0/4.1
+#define SERVOINPUT_IO_REG_TYPE			            uint32_t
 #define SERVOINPUT_PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
 #define SERVOINPUT_PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
 #define SERVOINPUT_DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
