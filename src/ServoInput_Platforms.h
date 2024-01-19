@@ -29,6 +29,12 @@
 
 #include <Arduino.h>
 
+
+// Define interrupt pin macro if it's not already defined by the platform
+#ifndef NOT_AN_INTERRUPT
+#define NOT_AN_INTERRUPT -1
+#endif
+
 // Blanket define to cover all instances
 #define SERVOINPUT_PIN_SPECIALIZATION
 
