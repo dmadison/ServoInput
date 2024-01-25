@@ -38,6 +38,7 @@ ServoInputPin<2> servo;
 
 void setup() {
 	Serial.begin(115200);
+	servo.attach();  // attaches the servo input interrupt
 
 	while (servo.available() == false) {
 		Serial.println("Waiting for servo signal...");

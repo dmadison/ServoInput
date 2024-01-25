@@ -60,6 +60,8 @@ ISR(PCINT0_vect) {  // pin change ISR handler for Arduino Uno pins D8 - D13
 void setup() {
 	Serial.begin(115200);
 
+	// note that we do *not* need to call servo.attach(), because we are
+	// using our own custom interrupt service routine (ISR)
 	setInterrupt();  // set pin change interrupt (see above)
 
 	while (servo.available() == false) {

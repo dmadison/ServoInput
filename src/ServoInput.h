@@ -96,7 +96,6 @@ public:
 			ServoInputPin<Pin>::PortRegister = SERVOINPUT_PIN_TO_BASEREG(Pin);
 		#endif
 		pinMode(Pin, INPUT_PULLUP);
-		attach();
 	}
 
 	ServoInputPin(uint16_t pMin, uint16_t pMax) : ServoInputPin() {

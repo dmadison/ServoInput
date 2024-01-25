@@ -53,6 +53,8 @@ ServoInputPin<ThrottleSignalPin> throttle(ThrottlePulseMin, ThrottlePulseMax);
 
 void setup() {
 	Serial.begin(115200);
+	steering.attach();  // attaches the steering servo input interrupt
+	throttle.attach();  // attaches the throttle servo input interrupt
 
 	while (!ServoInput.available()) {  // wait for all signals to be ready
 		Serial.println("Waiting for servo signals...");
