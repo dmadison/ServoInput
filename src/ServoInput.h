@@ -105,30 +105,59 @@ public:
 
 	void attachInterrupt() {
 		#if !defined(SERVOINPUT_NO_INTERRUPTS)
-			#if !defined(SERVOINPUT_SUPPRESS_WARNINGS) && !defined(SERVOINPUT_USING_PCINTLIB)
+
+			// Compile-time check that the selected pin supports interrupts
+			#if !defined(SERVOINPUT_DISABLE_PIN_CHECK) && !defined(SERVOINPUT_SUPPRESS_WARNINGS) && !defined(SERVOINPUT_USING_PCINTLIB)
 				static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This pin does not support external interrupts!");
 			#endif
 
-			if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // if pin supports external interrupts
+			// Interrupt attachment, with pin checks
+			#if !defined(SERVOINPUT_DISABLE_PIN_CHECK)
+
+				// Interrupt attachment, platform support
+				if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // if pin supports external interrupts
+					::attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+				}
+
+				// Interrupt attachment, PinChangeInterrupt
+				#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
+				else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
+					attachPCINT(digitalPinToPCINT(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+				}
+				#endif
+
+			// Interrupt attachment, no pin checks
+			// note that the PinChangeInterrupt library isn't supported here,
+			// because we have no way of checking whether the pin is supported
+			// in hardware vs in the library
+			#else
 				::attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
-			}
-			#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
-			else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
-				attachPCINT(digitalPinToPCINT(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
-			}
 			#endif
+
 		#endif
 	}
 
 	void detachInterrupt() {
 		#if !defined(SERVOINPUT_NO_INTERRUPTS)
-			if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // detach external interrupt
+
+			// Interrupt detachment, with pin checks
+			#if !defined(SERVOINPUT_DISABLE_PIN_CHECK)
+
+				// Interrupt detachment, platform support
+				if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // detach external interrupt
+					::detachInterrupt(digitalPinToInterrupt(Pin));
+				}
+
+				// Interrupt detachment, PinChangeInterrupt
+				#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
+				else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
+					detachPCINT(digitalPinToPCINT(Pin));
+				}
+				#endif
+
+			// Interrupt detachment, no pin checks
+			#else
 				::detachInterrupt(digitalPinToInterrupt(Pin));
-			}
-			#if defined(SERVOINPUT_USING_PCINTLIB)  // if using NicoHood's PinChangeInterrupt library
-			else if (digitalPinToPCINT(Pin) != NOT_AN_INTERRUPT) {
-				detachPCINT(digitalPinToPCINT(Pin));
-			}
 			#endif
 		#endif
 	}
