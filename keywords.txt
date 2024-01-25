@@ -29,8 +29,8 @@ getNumSignals	KEYWORD2
 # ISR
 isr	KEYWORD2
 
-attachInterrupt	KEYWORD2
-detachInterrupt	KEYWORD2
+attach	KEYWORD2
+detach	KEYWORD2
 
 getPin	KEYWORD2
 
