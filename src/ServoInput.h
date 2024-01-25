@@ -36,7 +36,7 @@ public:
 	ServoInputSignal();
 	~ServoInputSignal();
 
-	virtual boolean available() const = 0;
+	virtual bool available() const = 0;
 
 	uint16_t getPulse();
 	virtual unsigned long getPulseRaw() const = 0;
@@ -44,7 +44,7 @@ public:
 	float getAngle();
 	float getPercent();
 
-	boolean getBoolean();
+	bool getBoolean();
 
 	long map(long outMin, long outMax);
 
@@ -73,7 +73,7 @@ protected:
 	static const uint16_t PulseValidRange = 2000;   // us ( 500 - 2500)
 	static const uint16_t PulseDefaultRange = 1000;  // us (1000 - 2000)
 
-	static boolean pulseValidator(unsigned long pulse);
+	static bool pulseValidator(unsigned long pulse);
 
 	long remap(long pulse, long outMin, long outMax) const;
 
@@ -162,11 +162,11 @@ public:
 		#endif
 	}
 
-	boolean available() const {
-		boolean change = ServoInputPin<Pin>::changed;  // store temp version of volatile flag
+	bool available() const {
+		bool change = ServoInputPin<Pin>::changed;  // store temp version of volatile flag
 
 		if (change == true) {
-			boolean pulseValid = ServoInputSignal::pulseValidator(getPulseInternal());
+			bool pulseValid = ServoInputSignal::pulseValidator(getPulseInternal());
 
 			if (pulseValid == false) {
 				ServoInputPin<Pin>::changed = change = false;  // pulse is not valid, so we can reset (ignore) the 'changed' flag
@@ -175,10 +175,10 @@ public:
 		return change;
 	}
 
-	boolean read() {
+	bool read() {
 		unsigned long pulse = pulseIn(Pin, HIGH, 25000);  // 20 ms per + 5 ms of grace
 
-		boolean validPulse = pulseValidator(pulse);
+		bool validPulse = pulseValidator(pulse);
 		if (validPulse == true) {
 			pulseDuration = pulse;  // pulse is valid, store result
 		}
@@ -199,9 +199,9 @@ public:
 		static unsigned long start = 0;
 
 		#ifdef SERVOINPUT_PIN_SPECIALIZATION
-		const boolean state = SERVOINPUT_DIRECT_PIN_READ(PortRegister, PinMask);
+		const bool state = SERVOINPUT_DIRECT_PIN_READ(PortRegister, PinMask);
 		#else
-		const boolean state = digitalRead(Pin);
+		const bool state = digitalRead(Pin);
 		#endif
 
 		if (state == HIGH) {  // rising edge
@@ -214,7 +214,7 @@ public:
 	}
 
 protected:
-	static volatile boolean changed;
+	static volatile bool changed;
 	static volatile unsigned long pulseDuration;
 
 	static unsigned long getPulseInternal() {
@@ -238,15 +238,15 @@ template<uint8_t Pin> SERVOINPUT_IO_REG_TYPE ServoInputPin<Pin>::PinMask;
 template<uint8_t Pin> volatile SERVOINPUT_IO_REG_TYPE* ServoInputPin<Pin>::PortRegister;
 #endif
 
-template<uint8_t Pin> volatile boolean ServoInputPin<Pin>::changed = false;
+template<uint8_t Pin> volatile bool ServoInputPin<Pin>::changed = false;
 template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::pulseDuration = 0;
 
 
 class ServoInputManager {
 public:
-	static boolean available();
-	static boolean allAvailable();
-	static boolean anyAvailable();
+	static bool available();
+	static bool allAvailable();
+	static bool anyAvailable();
 
 	static uint8_t getNumSignals();
 };

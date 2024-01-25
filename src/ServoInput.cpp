@@ -22,13 +22,13 @@
 
 #include "ServoInput.h"
 
-boolean ServoInputManager::available() {
+bool ServoInputManager::available() {
 	return allAvailable();
 }
 
-boolean ServoInputManager::allAvailable() {
+bool ServoInputManager::allAvailable() {
 	ServoInputSignal* ptr = ServoInputSignal::getHead();
-	boolean available = false;
+	bool available = false;
 
 	while (ptr != nullptr) {
 		available = ptr->available();
@@ -39,9 +39,9 @@ boolean ServoInputManager::allAvailable() {
 	return available;
 }
 
-boolean ServoInputManager::anyAvailable() {
+bool ServoInputManager::anyAvailable() {
 	ServoInputSignal* ptr = ServoInputSignal::getHead();
-	boolean available = false;
+	bool available = false;
 
 	while (ptr != nullptr) {
 		available = ptr->available();
@@ -132,7 +132,7 @@ float ServoInputSignal::getPercent() {
 	return (float) out / ScaleFactor;
 }
 
-boolean ServoInputSignal::getBoolean() {
+bool ServoInputSignal::getBoolean() {
 	const uint16_t pulse = getPulse();
 	return pulse > getRangeCenter();
 }
@@ -218,7 +218,7 @@ ServoInputSignal* ServoInputSignal::getNext() const {
 	return next;
 }
 
-boolean ServoInputSignal::pulseValidator(unsigned long pulse) {
+bool ServoInputSignal::pulseValidator(unsigned long pulse) {
 	return pulse >= PulseCenter - (PulseValidRange / 2)
 		&& pulse <= PulseCenter + (PulseValidRange / 2);
 }
