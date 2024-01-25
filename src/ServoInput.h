@@ -96,14 +96,14 @@ public:
 			ServoInputPin<Pin>::PortRegister = SERVOINPUT_PIN_TO_BASEREG(Pin);
 		#endif
 		pinMode(Pin, INPUT_PULLUP);
-		attachInterrupt();
+		attach();
 	}
 
 	ServoInputPin(uint16_t pMin, uint16_t pMax) : ServoInputPin() {
 		ServoInputSignal::setRange(pMin, pMax);
 	}
 
-	void attachInterrupt() {
+	void attach() {
 		#if !defined(SERVOINPUT_NO_INTERRUPTS)
 
 			// Compile-time check that the selected pin supports interrupts
@@ -116,7 +116,7 @@ public:
 
 				// Interrupt attachment, platform support
 				if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // if pin supports external interrupts
-					::attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+					attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
 				}
 
 				// Interrupt attachment, PinChangeInterrupt
@@ -131,13 +131,13 @@ public:
 			// because we have no way of checking whether the pin is supported
 			// in hardware vs in the library
 			#else
-				::attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+				attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
 			#endif
 
 		#endif
 	}
 
-	void detachInterrupt() {
+	void detach() {
 		#if !defined(SERVOINPUT_NO_INTERRUPTS)
 
 			// Interrupt detachment, with pin checks
@@ -145,7 +145,7 @@ public:
 
 				// Interrupt detachment, platform support
 				if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // detach external interrupt
-					::detachInterrupt(digitalPinToInterrupt(Pin));
+					detachInterrupt(digitalPinToInterrupt(Pin));
 				}
 
 				// Interrupt detachment, PinChangeInterrupt
@@ -157,7 +157,7 @@ public:
 
 			// Interrupt detachment, no pin checks
 			#else
-				::detachInterrupt(digitalPinToInterrupt(Pin));
+				detachInterrupt(digitalPinToInterrupt(Pin));
 			#endif
 		#endif
 	}
