@@ -119,6 +119,9 @@ public:
 				static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This pin does not support external interrupts!");
 			#endif
 
+			// quit early if the interrupt is already attached
+			if (ServoInputPin<Pin>::interruptAttached == true) return;
+
 			// Interrupt attachment, with pin checks
 			#if !defined(SERVOINPUT_DISABLE_PIN_CHECK)
 
@@ -142,11 +145,17 @@ public:
 				attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
 			#endif
 
+			// set flag to avoid multiple attachment requests
+			ServoInputPin<Pin>::interruptAttached = true;
+
 		#endif
 	}
 
 	void detach() {
 		#if !defined(SERVOINPUT_NO_INTERRUPTS)
+
+			// quit early if the interrupt is not attached
+			if (ServoInputPin<Pin>::interruptAttached == false) return;
 
 			// Interrupt detachment, with pin checks
 			#if !defined(SERVOINPUT_DISABLE_PIN_CHECK)
@@ -167,6 +176,10 @@ public:
 			#else
 				detachInterrupt(digitalPinToInterrupt(Pin));
 			#endif
+
+			// set flag to show that we've detached successfully
+			ServoInputPin<Pin>::interruptAttached = false;
+
 		#endif
 	}
 
@@ -238,6 +251,10 @@ private:
 	// class instance counter, for automatic interrupt detachment
 	static uint8_t refCount;
 
+	// flag to indicate whether the class interrupt is attached, to
+	// avoid making multiple calls to the platform attachment function
+	static bool interruptAttached;
+
 #ifdef SERVOINPUT_PIN_SPECIALIZATION
 private:
 	static SERVOINPUT_IO_REG_TYPE PinMask;  // bitmask to isolate the I/O pin
@@ -246,6 +263,7 @@ private:
 };
 
 template<uint8_t Pin> uint8_t ServoInputPin<Pin>::refCount = 0;
+template<uint8_t Pin> bool ServoInputPin<Pin>::interruptAttached = false;
 
 #ifdef SERVOINPUT_PIN_SPECIALIZATION
 template<uint8_t Pin> SERVOINPUT_IO_REG_TYPE ServoInputPin<Pin>::PinMask;
