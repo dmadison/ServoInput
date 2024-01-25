@@ -34,7 +34,7 @@
 class ServoInputSignal {
 public:
 	ServoInputSignal();
-	~ServoInputSignal();
+	virtual ~ServoInputSignal();
 
 	virtual bool available() const = 0;
 
@@ -96,10 +96,19 @@ public:
 			ServoInputPin<Pin>::PortRegister = SERVOINPUT_PIN_TO_BASEREG(Pin);
 		#endif
 		pinMode(Pin, INPUT_PULLUP);
+		
+		ServoInputPin<Pin>::refCount++;
 	}
 
 	ServoInputPin(uint16_t pMin, uint16_t pMax) : ServoInputPin() {
 		ServoInputSignal::setRange(pMin, pMax);
+	}
+
+	~ServoInputPin() {
+		ServoInputPin<Pin>::refCount--;
+		if (ServoInputPin<Pin>::refCount == 0) {
+			this->detach();  // no more class instances, detach interrupt
+		}
 	}
 
 	void attach() {
@@ -225,12 +234,18 @@ protected:
 		return pulse;
 	}
 
+private:
+	// class instance counter, for automatic interrupt detachment
+	static uint8_t refCount;
+
 #ifdef SERVOINPUT_PIN_SPECIALIZATION
 private:
 	static SERVOINPUT_IO_REG_TYPE PinMask;  // bitmask to isolate the I/O pin
 	static volatile SERVOINPUT_IO_REG_TYPE* PortRegister;  // pointer to the I/O register for the pin
 #endif
 };
+
+template<uint8_t Pin> uint8_t ServoInputPin<Pin>::refCount = 0;
 
 #ifdef SERVOINPUT_PIN_SPECIALIZATION
 template<uint8_t Pin> SERVOINPUT_IO_REG_TYPE ServoInputPin<Pin>::PinMask;
