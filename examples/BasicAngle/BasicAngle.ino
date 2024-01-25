@@ -38,6 +38,11 @@ ServoInputPin<2> servo;
 
 void setup() {
 	Serial.begin(115200);
+
+	while (servo.available() == false) {
+		Serial.println("Waiting for servo signal...");
+		delay(500);
+	}
 }
 
 void loop() {
