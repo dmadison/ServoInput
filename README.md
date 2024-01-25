@@ -12,7 +12,9 @@ For more information, [see the article](https://www.partsnotincluded.com/servo-i
 
 ServoInputPin<2> servo;
 
-void setup() {}
+void setup() {
+	servo.attach();
+}
 
 void loop() {
 	float angle = servo.getAngle();  // get angle of servo (0 - 180)
