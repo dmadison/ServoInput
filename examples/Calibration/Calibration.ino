@@ -40,6 +40,7 @@ ServoInputPin<2> servo;
 
 void setup() {
 	Serial.begin(115200);
+	servo.attach();  // attaches the servo input interrupt
 
 	int center = servo.getRangeCenter();  // get center value of range
 	servo.setRange(center, center);  // set min/max values to center

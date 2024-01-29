@@ -34,9 +34,9 @@
 class ServoInputSignal {
 public:
 	ServoInputSignal();
-	~ServoInputSignal();
+	virtual ~ServoInputSignal();
 
-	virtual boolean available() const = 0;
+	virtual bool available() const = 0;
 
 	uint16_t getPulse();
 	virtual unsigned long getPulseRaw() const = 0;
@@ -44,7 +44,7 @@ public:
 	float getAngle();
 	float getPercent();
 
-	boolean getBoolean();
+	bool getBoolean();
 
 	long map(long outMin, long outMax);
 
@@ -73,7 +73,7 @@ protected:
 	static const uint16_t PulseValidRange = 2000;   // us ( 500 - 2500)
 	static const uint16_t PulseDefaultRange = 1000;  // us (1000 - 2000)
 
-	static boolean pulseValidator(unsigned long pulse);
+	static bool pulseValidator(unsigned long pulse);
 
 	long remap(long pulse, long outMin, long outMax) const;
 
@@ -96,14 +96,22 @@ public:
 			ServoInputPin<Pin>::PortRegister = SERVOINPUT_PIN_TO_BASEREG(Pin);
 		#endif
 		pinMode(Pin, INPUT_PULLUP);
-		attachInterrupt();
+		
+		ServoInputPin<Pin>::refCount++;
 	}
 
 	ServoInputPin(uint16_t pMin, uint16_t pMax) : ServoInputPin() {
 		ServoInputSignal::setRange(pMin, pMax);
 	}
 
-	void attachInterrupt() {
+	~ServoInputPin() {
+		ServoInputPin<Pin>::refCount--;
+		if (ServoInputPin<Pin>::refCount == 0) {
+			this->detach();  // no more class instances, detach interrupt
+		}
+	}
+
+	void attach() {
 		#if !defined(SERVOINPUT_NO_INTERRUPTS)
 
 			// Compile-time check that the selected pin supports interrupts
@@ -111,12 +119,15 @@ public:
 				static_assert(digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT, "This pin does not support external interrupts!");
 			#endif
 
+			// quit early if the interrupt is already attached
+			if (ServoInputPin<Pin>::interruptAttached == true) return;
+
 			// Interrupt attachment, with pin checks
 			#if !defined(SERVOINPUT_DISABLE_PIN_CHECK)
 
 				// Interrupt attachment, platform support
 				if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // if pin supports external interrupts
-					::attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+					attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
 				}
 
 				// Interrupt attachment, PinChangeInterrupt
@@ -131,21 +142,27 @@ public:
 			// because we have no way of checking whether the pin is supported
 			// in hardware vs in the library
 			#else
-				::attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
+				attachInterrupt(digitalPinToInterrupt(Pin), reinterpret_cast<void(*)()>(isr), CHANGE);
 			#endif
+
+			// set flag to avoid multiple attachment requests
+			ServoInputPin<Pin>::interruptAttached = true;
 
 		#endif
 	}
 
-	void detachInterrupt() {
+	void detach() {
 		#if !defined(SERVOINPUT_NO_INTERRUPTS)
+
+			// quit early if the interrupt is not attached
+			if (ServoInputPin<Pin>::interruptAttached == false) return;
 
 			// Interrupt detachment, with pin checks
 			#if !defined(SERVOINPUT_DISABLE_PIN_CHECK)
 
 				// Interrupt detachment, platform support
 				if (digitalPinToInterrupt(Pin) != NOT_AN_INTERRUPT) {  // detach external interrupt
-					::detachInterrupt(digitalPinToInterrupt(Pin));
+					detachInterrupt(digitalPinToInterrupt(Pin));
 				}
 
 				// Interrupt detachment, PinChangeInterrupt
@@ -157,16 +174,20 @@ public:
 
 			// Interrupt detachment, no pin checks
 			#else
-				::detachInterrupt(digitalPinToInterrupt(Pin));
+				detachInterrupt(digitalPinToInterrupt(Pin));
 			#endif
+
+			// set flag to show that we've detached successfully
+			ServoInputPin<Pin>::interruptAttached = false;
+
 		#endif
 	}
 
-	boolean available() const {
-		boolean change = ServoInputPin<Pin>::changed;  // store temp version of volatile flag
+	bool available() const {
+		bool change = ServoInputPin<Pin>::changed;  // store temp version of volatile flag
 
 		if (change == true) {
-			boolean pulseValid = ServoInputSignal::pulseValidator(getPulseInternal());
+			bool pulseValid = ServoInputSignal::pulseValidator(getPulseInternal());
 
 			if (pulseValid == false) {
 				ServoInputPin<Pin>::changed = change = false;  // pulse is not valid, so we can reset (ignore) the 'changed' flag
@@ -175,10 +196,10 @@ public:
 		return change;
 	}
 
-	boolean read() {
+	bool read() {
 		unsigned long pulse = pulseIn(Pin, HIGH, 25000);  // 20 ms per + 5 ms of grace
 
-		boolean validPulse = pulseValidator(pulse);
+		bool validPulse = pulseValidator(pulse);
 		if (validPulse == true) {
 			pulseDuration = pulse;  // pulse is valid, store result
 		}
@@ -199,9 +220,9 @@ public:
 		static unsigned long start = 0;
 
 		#ifdef SERVOINPUT_PIN_SPECIALIZATION
-		const boolean state = SERVOINPUT_DIRECT_PIN_READ(PortRegister, PinMask);
+		const bool state = SERVOINPUT_DIRECT_PIN_READ(PortRegister, PinMask);
 		#else
-		const boolean state = digitalRead(Pin);
+		const bool state = digitalRead(Pin);
 		#endif
 
 		if (state == HIGH) {  // rising edge
@@ -214,7 +235,7 @@ public:
 	}
 
 protected:
-	static volatile boolean changed;
+	static volatile bool changed;
 	static volatile unsigned long pulseDuration;
 
 	static unsigned long getPulseInternal() {
@@ -226,6 +247,14 @@ protected:
 		return pulse;
 	}
 
+private:
+	// class instance counter, for automatic interrupt detachment
+	static uint8_t refCount;
+
+	// flag to indicate whether the class interrupt is attached, to
+	// avoid making multiple calls to the platform attachment function
+	static bool interruptAttached;
+
 #ifdef SERVOINPUT_PIN_SPECIALIZATION
 private:
 	static SERVOINPUT_IO_REG_TYPE PinMask;  // bitmask to isolate the I/O pin
@@ -233,20 +262,23 @@ private:
 #endif
 };
 
+template<uint8_t Pin> uint8_t ServoInputPin<Pin>::refCount = 0;
+template<uint8_t Pin> bool ServoInputPin<Pin>::interruptAttached = false;
+
 #ifdef SERVOINPUT_PIN_SPECIALIZATION
 template<uint8_t Pin> SERVOINPUT_IO_REG_TYPE ServoInputPin<Pin>::PinMask;
 template<uint8_t Pin> volatile SERVOINPUT_IO_REG_TYPE* ServoInputPin<Pin>::PortRegister;
 #endif
 
-template<uint8_t Pin> volatile boolean ServoInputPin<Pin>::changed = false;
+template<uint8_t Pin> volatile bool ServoInputPin<Pin>::changed = false;
 template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::pulseDuration = 0;
 
 
 class ServoInputManager {
 public:
-	static boolean available();
-	static boolean allAvailable();
-	static boolean anyAvailable();
+	static bool available();
+	static bool allAvailable();
+	static bool anyAvailable();
 
 	static uint8_t getNumSignals();
 };
