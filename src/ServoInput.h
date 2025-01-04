@@ -281,12 +281,12 @@ protected:
 	*/
 	long remap(long pulse, long outMin, long outMax) const;
 
-	uint16_t pulseMin;  ///< filtering range minimum value
-	uint16_t pulseMax;  ///< filtering range maximum value
-
 private:
 	static ServoInputSignal* head;     ///< head of the linked list
 	ServoInputSignal* next = nullptr;  ///< next object in the linked list
+
+	uint16_t pulseMin;                 ///< filtering range minimum value
+	uint16_t pulseMax;                 ///< filtering range maximum value
 
 	uint16_t lastPulse = 0;            ///< the last valid pulse duration
 };
