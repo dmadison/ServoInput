@@ -36,6 +36,9 @@ public:
 	ServoInputSignal();
 	virtual ~ServoInputSignal();
 
+	virtual void attach() = 0;
+	virtual void detach() = 0;
+
 	virtual bool available() const = 0;
 
 	uint16_t getPulse();
@@ -276,6 +279,9 @@ template<uint8_t Pin> volatile unsigned long ServoInputPin<Pin>::pulseDuration =
 
 class ServoInputManager {
 public:
+	static void attach();
+	static void detach();
+
 	static bool available();
 	static bool allAvailable();
 	static bool anyAvailable();
