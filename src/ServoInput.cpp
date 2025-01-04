@@ -22,6 +22,24 @@
 
 #include "ServoInput.h"
 
+void ServoInputManager::attach() {
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
+
+	while (ptr != nullptr) {
+		ptr->attach();
+		ptr = ptr->getNext();
+	}
+}
+
+void ServoInputManager::detach() {
+	ServoInputSignal* ptr = ServoInputSignal::getHead();
+
+	while (ptr != nullptr) {
+		ptr->detach();
+		ptr = ptr->getNext();
+	}
+}
+
 bool ServoInputManager::available() {
 	return allAvailable();
 }

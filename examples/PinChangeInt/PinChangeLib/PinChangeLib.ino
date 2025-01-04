@@ -53,8 +53,7 @@ ServoInputPin<pin2> servo2;
 
 void setup() {
 	Serial.begin(115200);
-	servo1.attach();  // attaches the first servo input interrupt
-	servo2.attach();  // attaches the second servo input interrupt
+	ServoInput.attach();  // attach all inputs
 
 	// wait for all servo signals to be read for the first time
 	while (!ServoInput.available()) {
