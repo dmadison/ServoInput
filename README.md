@@ -45,7 +45,7 @@ The Servo Input library uses external interrupts to keep track of servo position
 | Due                               | all digital pins                   |
 | 101                               | 2, 5, 7, 8, 10, 11, 12, 13         |
 
-*<sup>[Original table from arduino.cc/reference, modified to show only CHANGE interrupts](https://docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt/)</sup>*
+*<sup>[Original table from docs.arduino.cc, modified to show only CHANGE interrupts](https://docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt/)</sup>*
 
 Some third party boards such as the [Teensy 3.2](https://www.pjrc.com/store/teensy32.html) and the [ESP8266](https://en.wikipedia.org/wiki/ESP8266) support external interrupts on all pins. Be sure to check the documentation for your board before connecting your servos.
 
