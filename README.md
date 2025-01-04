@@ -27,7 +27,7 @@ Servo motors are driven by three pins: signal, power, and ground. To use this li
 
 ### Signals and Interrupts
 
-The Servo Input library uses external interrupts to keep track of servo positions without delaying the rest of your sketch. In order for the library to work, you must connect the servo signal wires to [**interrupt-capable pins**](https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/).
+The Servo Input library uses external interrupts to keep track of servo positions without delaying the rest of your sketch. In order for the library to work, you must connect the servo signal wires to [**interrupt-capable pins**](https://docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt/).
 
 | BOARD                             | DIGITAL PINS USABLE FOR INTERRUPTS |
 |-----------------------------------|------------------------------------|
@@ -39,10 +39,13 @@ The Servo Input library uses external interrupts to keep track of servo position
 | MKR Family boards                 | 0, 1, 4, 5, 6, 7, 8, 9, A1, A2     |
 | Nano 33 IoT                       | 2, 3, 9, 10, 11, 13, A1, A5, A7    |
 | Nano 33 BLE, Nano 33 BLE Sense    | all pins                           |
+| Nano RP2040 Connect               | 0-13, A0-A5                        |
+| Nano ESP32                        | all pins                           |
+| GIGA R1 WiFi                      | all pins                           |
 | Due                               | all digital pins                   |
 | 101                               | 2, 5, 7, 8, 10, 11, 12, 13         |
 
-*<sup>[Original table from arduino.cc/reference, modified to show only CHANGE interrupts](https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/)</sup>*
+*<sup>[Original table from arduino.cc/reference, modified to show only CHANGE interrupts](https://docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt/)</sup>*
 
 Some third party boards such as the [Teensy 3.2](https://www.pjrc.com/store/teensy32.html) and the [ESP8266](https://en.wikipedia.org/wiki/ESP8266) support external interrupts on all pins. Be sure to check the documentation for your board before connecting your servos.
 
