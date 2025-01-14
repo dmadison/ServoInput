@@ -1,5 +1,5 @@
 # Servo Input Library
-[![arduino-library-badge](https://www.ardu-badge.com/badge/ServoInput.svg?)](https://www.ardu-badge.com/ServoInput) [![Build Status](https://github.com/dmadison/ServoInput/workflows/build/badge.svg?branch=master)](https://github.com/dmadison/ServoInput/actions?query=workflow%3Abuild)
+[![arduino-library-badge](https://www.ardu-badge.com/badge/ServoInput.svg?)](https://www.ardu-badge.com/ServoInput) [![Build Status](https://github.com/dmadison/ServoInput/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/dmadison/ServoInput/actions?query=workflow%3Abuild)
 
 This is an Arduino library that allows you to read the position of servo motors via their signal wire without delay. You can use this library to read RC receiver channels, find the motor positions of robotics, or debug other servo motor projects.
 
